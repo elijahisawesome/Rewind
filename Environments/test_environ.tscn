@@ -1,0 +1,25 @@
+[gd_scene load_steps=5 format=3 uid="uid://c7a2h5mckfou4"]
+
+[ext_resource type="PackedScene" uid="uid://bo5xau7j8cq1g" path="res://Environments/TestEnviron.blend" id="1_ge21m"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_0bltt"]
+sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+
+[sub_resource type="Sky" id="Sky_yjm8f"]
+sky_material = SubResource("ProceduralSkyMaterial_0bltt")
+
+[sub_resource type="Environment" id="Environment_bsir4"]
+background_mode = 2
+sky = SubResource("Sky_yjm8f")
+tonemap_mode = 2
+glow_enabled = true
+
+[node name="TestEnviron" instance=ExtResource("1_ge21m")]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." index="0"]
+environment = SubResource("Environment_bsir4")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." index="1"]
+transform = Transform3D(-0.866023, -0.433016, 0.250001, 0, 0.499998, 0.866027, -0.500003, 0.749999, -0.43301, 0, 0, 0)
+shadow_enabled = true

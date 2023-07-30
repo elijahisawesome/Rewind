@@ -1,0 +1,30 @@
+[gd_scene load_steps=7 format=3 uid="uid://iyeds18qvhoc"]
+
+[ext_resource type="Script" path="res://Player.cs" id="1_g6hfm"]
+[ext_resource type="Script" path="res://Camera3D.cs" id="2_akrxr"]
+[ext_resource type="Script" path="res://Rewind.cs" id="3_t7raf"]
+[ext_resource type="PackedScene" uid="uid://cosyybq18f384" path="res://UI/ConnectScreenUI.tscn" id="4_xjscy"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_an347"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_cmap5"]
+
+[node name="Player" type="CharacterBody3D"]
+script = ExtResource("1_g6hfm")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CapsuleShape3D_an347")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+mesh = SubResource("CapsuleMesh_cmap5")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+script = ExtResource("2_akrxr")
+
+[node name="Rewind" type="Node" parent="Camera3D"]
+script = ExtResource("3_t7raf")
+
+[node name="ConnectScreenUI" parent="." instance=ExtResource("4_xjscy")]
