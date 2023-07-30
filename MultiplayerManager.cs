@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Threading;
+using System.Net.Sockets;
 
 public partial class MultiplayerManager : Node
 {
@@ -8,17 +9,20 @@ public partial class MultiplayerManager : Node
 	MPlayer [] mPlayers;
 	int playerCount = 0;
 	int maxPlayerCount = 4;
+	UdpClient udpClient = new UdpClient(11000);
 	// Called when the node enters the scene tree for the first time.
 		//Test Networking;
 	////////////
-	public UDPSend clientSend = new UDPSend();
-	public UDPRecieve hostRecieve = new UDPRecieve();
+	public UDPSend clientSend;
+	public UDPRecieve hostRecieve;
 	public ConnectScreenUI UI;
 
 	public bool hosting;
 
 	public override void _Ready()
 	{
+		clientSend = new UDPSend(ref udpClient);
+		hostRecieve = new UDPRecieve(ref udpClient);
 		mPlayers = new MPlayer[maxPlayerCount];
 		UI = GetParent<Node>().GetNode<ConnectScreenUI>("Player/ConnectScreenUI");
 	}

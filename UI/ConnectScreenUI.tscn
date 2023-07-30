@@ -36,14 +36,10 @@ layout_mode = 2
 placeholder_text = "73.115.158.186"
 scroll_fit_content_height = true
 
-[node name="VBoxContainer2" type="VBoxContainer" parent="SubViewportContainer/HBoxContainer"]
-layout_mode = 2
-alignment = 1
-
-[node name="HostButton" type="Button" parent="SubViewportContainer/HBoxContainer/VBoxContainer2"]
+[node name="HostButton" type="Button" parent="SubViewportContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
 text = "Host
 "
 
 [connection signal="pressed" from="SubViewportContainer/HBoxContainer/VBoxContainer/Button" to="." method="_on_button_pressed"]
-[connection signal="pressed" from="SubViewportContainer/HBoxContainer/VBoxContainer2/HostButton" to="." method="_on_host_button_pressed"]
+[connection signal="pressed" from="SubViewportContainer/HBoxContainer/VBoxContainer/HostButton" to="." method="_on_host_button_pressed"]

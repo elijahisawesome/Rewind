@@ -8,7 +8,11 @@ public class UDPRecieve{
     RecievedDataStruct clientPacket = new RecievedDataStruct();
 
     System.Net.IPEndPoint RemoteIpEndPoint = new  System.Net.IPEndPoint(System.Net.IPAddress.Any, 0);
-    UdpClient udpClient = new UdpClient(11000);
+    UdpClient udpClient;
+
+    public UDPRecieve(ref UdpClient client){
+        udpClient = client;
+    }
     public async System.Threading.Tasks.Task RecieveData(){
         try{
             //byte[] recieveBytes = await udpClient.ReceiveAsync(ref RemoteIpEndPoint);
