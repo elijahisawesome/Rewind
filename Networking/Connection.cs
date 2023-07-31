@@ -24,14 +24,15 @@ public class TCPConnection{
         }
         else{
             client = new TcpClient();
-            client.BeginConnect(address,11001,new System.AsyncCallback(acceptSocketCallbackCli),client);
+            client.Connect(address,11001);
+            //client.BeginConnect(address,11001,new System.AsyncCallback(acceptSocketCallbackCli),client);
         }
     }
     public void onConnection(){
         mpm.playerConnect();
     }
     private void acceptSocketCallbackServ(System.IAsyncResult result){
-
+        Godot.GD.Print("Hosting");
         Socket clientSocket = listener.EndAcceptSocket(result);
         int k = clientSocket.Receive(recieved);
         for (int i=0;i<k;i++){
@@ -40,7 +41,8 @@ public class TCPConnection{
             
     }
     private void acceptSocketCallbackCli(System.IAsyncResult result){
-
+        //Socket clientSocket = client.
+        Godot.GD.Print("Clienttt");
     }
 
 }

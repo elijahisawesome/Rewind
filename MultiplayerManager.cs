@@ -37,12 +37,14 @@ public partial class MultiplayerManager : Node
 	{
 		if(UI.isConnected()){
 			//Genericize
+			/*
 			clientSend.iterate();
 			clientSend.SendDataTest();
 
 			RecievedDataStruct packet = new RecievedDataStruct();
 			await hostRecieve.RecieveData();
 			packet = hostRecieve.getPacket();
+			*/
 		}
 		else if(UI.isHosting()){
 			try{
