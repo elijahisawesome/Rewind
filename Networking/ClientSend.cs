@@ -4,6 +4,7 @@ using System.Threading;
 
 
 public class UDPSend{
+
     int x = 0;
     string testString = "Is?";
     byte[] sendBytesTest = System.Text.Encoding.ASCII.GetBytes("Is anybody there?");
@@ -22,6 +23,11 @@ public class UDPSend{
     }
     public void SendDataTest(){
         udpClient.Send(sendBytesTest);
+    }
+    public void SendConnect(){
+        sendBytes = System.Text.Encoding.ASCII.GetBytes("Connect, Hello!");
+
+        udpClient.Send(sendBytes);
     }
     public void iterate(){
         x++;

@@ -28,6 +28,7 @@ public partial class MultiplayerManager : Node
 	}
 	public void connectClient(string adr){
 		clientSend.Connect(adr);
+		clientSend.SendConnect();
 	}
 
 		public override async void _PhysicsProcess(double delta)
@@ -42,6 +43,17 @@ public partial class MultiplayerManager : Node
 			packet = hostRecieve.getPacket();
 		}
 		else if(UI.isHosting()){
+			try{
+				RecievedDataStruct packet = new RecievedDataStruct();
+				await hostRecieve.RecieveData();
+				packet = hostRecieve.getPacket();
+			}
+			catch(Exception e){
+
+			}
+
+			//Fix this shit later
+			/*
 			for(int x = 0; x<playerCount; x++){
 				await mPlayers[x].recieveOrientation();
 				//mPlayers[x].setOrientation();
@@ -52,13 +64,14 @@ public partial class MultiplayerManager : Node
 				packet.position = mPlayers[x].Position.ToString();
 				packet.rotation = mPlayers[x].Rotation.ToString();
 				mPlayers[x].hostTransmitPositionToPlayers(packet);
-			}
+			}*/
 		}
 
 	}
 
     //When connection is recieved, spawn new mPlayer;
 	public void playerConnect(){
+		GD.Print("Player COnnected");
 		if(playerCount < maxPlayerCount){
 			mPlayers[playerCount] = new MPlayer();
 			playerCount++;

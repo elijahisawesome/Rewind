@@ -6,6 +6,7 @@ public partial class MPlayer : MeshInstance3D
 	public int id;
 	UDPSend send;
 	UDPRecieve recieve;
+
 	public Vector3 Position;
 	public Vector3 Rotation;
 	// Called when the node enters the scene tree for the first time.
