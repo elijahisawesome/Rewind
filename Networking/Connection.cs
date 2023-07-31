@@ -25,6 +25,9 @@ public class TCPConnection{
         else{
             client = new TcpClient();
             client.Connect(address,11001);
+            string testString = "hello!";
+            NetworkStream stm = client.GetStream();
+            
             //client.BeginConnect(address,11001,new System.AsyncCallback(acceptSocketCallbackCli),client);
         }
     }

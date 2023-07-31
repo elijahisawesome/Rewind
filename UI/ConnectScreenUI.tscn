@@ -33,6 +33,7 @@ text = "Connect"
 
 [node name="TextEdit" type="TextEdit" parent="SubViewportContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
+text = "73.115.158.186"
 placeholder_text = "73.115.158.186"
 scroll_fit_content_height = true
 
