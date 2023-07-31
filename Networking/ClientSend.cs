@@ -10,13 +10,16 @@ public class UDPSend{
     byte[] sendBytesTest = System.Text.Encoding.ASCII.GetBytes("Is anybody there?");
     byte [] sendBytes;
 
+    string hostAddress;
+
     UdpClient udpClient;
     public UDPSend(ref UdpClient client){
         udpClient = client;
     }
-    public bool Connect(string adr){
+    public bool Connect(string adr, ref TCPConnection connection){
+        connection.Connect(adr);
         bool connected = true;
-        udpClient.Connect(adr, 11000);
+        //udpClient.Connect(adr, 11000);
         Godot.GD.Print(adr);
 
         return connected;

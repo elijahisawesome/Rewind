@@ -16,6 +16,7 @@ public partial class MultiplayerManager : Node
 	public UDPSend clientSend;
 	public UDPRecieve hostRecieve;
 	public ConnectScreenUI UI;
+	TCPConnection connection;
 
 	public bool hosting;
 
@@ -27,8 +28,9 @@ public partial class MultiplayerManager : Node
 		UI = GetParent<Node>().GetNode<ConnectScreenUI>("Player/ConnectScreenUI");
 	}
 	public void connectClient(string adr){
-		clientSend.Connect(adr);
-		clientSend.SendConnect();
+		connection = new TCPConnection(false, this);
+		clientSend.Connect(adr, ref connection);
+		//clientSend.SendConnect();
 	}
 
 		public override async void _PhysicsProcess(double delta)
@@ -74,6 +76,7 @@ public partial class MultiplayerManager : Node
 		GD.Print("Player COnnected");
 		if(playerCount < maxPlayerCount){
 			mPlayers[playerCount] = new MPlayer();
+			GetTree().Root.AddChild(mPlayers[playerCount]);
 			playerCount++;
 		}
 		if(hosting){
@@ -83,6 +86,7 @@ public partial class MultiplayerManager : Node
 	}
 	public void setHosting(){
 		hosting = true;
+		connection = new TCPConnection(true, this);
 	}
 
 	//Send all relavent info to all mPlayers;

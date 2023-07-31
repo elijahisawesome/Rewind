@@ -2,17 +2,19 @@ using System.Net.Sockets;
 using System.Text.Encodings;
 using System.Threading;
 
-class TCPConnection{
+public class TCPConnection{
     
     TcpClient client;
     TcpListener listener;
+    MultiplayerManager mpm;
     byte[] recieved;
     int defaultPort = 11001;
 
     bool isServer = false;
 
-    public TCPConnection(bool setIsServer){
+    public TCPConnection(bool setIsServer, in MultiplayerManager _mpm){
         isServer = setIsServer;
+        mpm = _mpm;
     }
     public void Connect(string address){
         if(isServer){
@@ -26,10 +28,7 @@ class TCPConnection{
         }
     }
     public void onConnection(){
-
-    }
-    public void listen(){
-
+        mpm.playerConnect();
     }
     private void acceptSocketCallbackServ(System.IAsyncResult result){
 
@@ -39,10 +38,9 @@ class TCPConnection{
             Godot.GD.Print(System.Convert.ToChar(recieved[i]));
         }
             
-
     }
     private void acceptSocketCallbackCli(System.IAsyncResult result){
-        
+
     }
 
 }
