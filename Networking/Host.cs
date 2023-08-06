@@ -7,7 +7,7 @@ public class UDPRecieve{
     byte[] recieved;
     RecievedDataStruct clientPacket = new RecievedDataStruct();
 
-    System.Net.IPEndPoint RemoteIpEndPoint = new  System.Net.IPEndPoint(System.Net.IPAddress.Any, 0);
+    System.Net.IPEndPoint RemoteIpEndPoint;
     UdpClient udpClient;
 
     public UDPRecieve(ref UdpClient client){
@@ -18,24 +18,33 @@ public class UDPRecieve{
             //byte[] recieveBytes = await udpClient.ReceiveAsync(ref RemoteIpEndPoint);
             //returnData = System.Text.Encoding.ASCII.GetString(recieveBytes);
             udpClient.BeginReceive(new System.AsyncCallback(recv),null);
-            processPacket();
+            
         }
         catch(SocketException e){
 
         }
         
     }
+    public void Connect(string ip, int port){
+        RemoteIpEndPoint = new  System.Net.IPEndPoint(System.Net.IPAddress.Any, port);
+        udpClient.Client.Bind(RemoteIpEndPoint);
+        //udpClient.Connect(ip,port);
+    }
     private void recv(System.IAsyncResult result){
-        recieved = udpClient.EndReceive(result, ref RemoteIpEndPoint);        
+        recieved = udpClient.EndReceive(result, ref RemoteIpEndPoint);
+        GD.Print("Byte recieved");
+        processPacket(); 
     }
     private void processPacket(){
         string data = System.Text.Encoding.ASCII.GetString(recieved);
-
+        string [] splitData = data.Split("/");
         GD.Print(data);
 
-        clientPacket.clientNumber = data[0];
-        clientPacket.position = data[1].ToString();
-        clientPacket.rotation = data[2].ToString();
+        clientPacket.clientNumber = splitData[0].ToInt();
+        clientPacket.px = splitData[1];
+        clientPacket.py = splitData[2];
+        clientPacket.pz = splitData[3];
+        clientPacket.rotation = splitData[4];
     }
     public RecievedDataStruct getPacket(){
         return clientPacket;
@@ -46,5 +55,6 @@ public class UDPRecieve{
     public void sendPacket(){
 
     }
+
 
 }

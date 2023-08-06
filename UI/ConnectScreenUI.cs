@@ -19,6 +19,7 @@ public partial class ConnectScreenUI : Node
 	{
 	}
 	public void ConnectAttempt(){
+		MPM.setHostAddress(tEdit.Text);
 		MPM.connectClient(tEdit.Text);
 	}
 	public bool isConnected(){

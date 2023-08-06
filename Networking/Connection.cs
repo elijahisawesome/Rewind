@@ -5,6 +5,7 @@ using System.Threading;
 public class TCPConnection{
     
     TcpClient client;
+    TcpClient clientFromListener;
     TcpListener listener;
     MultiplayerManager mpm;
     byte[] recieved;
@@ -16,36 +17,117 @@ public class TCPConnection{
         isServer = setIsServer;
         mpm = _mpm;
     }
-    public void Connect(string address){
+    public async void Connect(string address){
         if(isServer){
+            Godot.GD.Print("Fuck!");
             System.Net.IPAddress localAddr = System.Net.IPAddress.Parse("127.0.0.1");
             listener = new TcpListener(System.Net.IPAddress.Any,defaultPort);
-            listener.BeginAcceptSocket(new System.AsyncCallback(acceptSocketCallbackServ), listener);
+            listener.Start();
+            listener.BeginAcceptTcpClient(new System.AsyncCallback(acceptSocketCallbackServ), listener);
         }
         else{
             client = new TcpClient();
-            client.Connect(address,11001);
-            string testString = "hello!";
-            NetworkStream stm = client.GetStream();
+            //client.Connect(address,defaultPort);
             
-            //client.BeginConnect(address,11001,new System.AsyncCallback(acceptSocketCallbackCli),client);
+            client.BeginConnect(address,11002,new System.AsyncCallback(acceptSocketCallbackCli),client);
+
         }
-    }
-    public void onConnection(){
-        mpm.playerConnect();
-    }
-    private void acceptSocketCallbackServ(System.IAsyncResult result){
-        Godot.GD.Print("Hosting");
-        Socket clientSocket = listener.EndAcceptSocket(result);
-        int k = clientSocket.Receive(recieved);
-        for (int i=0;i<k;i++){
-            Godot.GD.Print(System.Convert.ToChar(recieved[i]));
-        }
-            
-    }
-    private void acceptSocketCallbackCli(System.IAsyncResult result){
-        //Socket clientSocket = client.
-        Godot.GD.Print("Clienttt");
     }
 
+    private void acceptSocketCallbackServ(System.IAsyncResult result){
+        Godot.GD.Print("Hosting from callback");
+        
+        clientFromListener = listener.EndAcceptTcpClient(result);
+        //NetworkStream stream = clientFromListener.GetStream();
+        System.Net.IPEndPoint endPoint = clientFromListener.Client.RemoteEndPoint as System.Net.IPEndPoint;
+        
+        mpm.playerConnect(endPoint.Address.ToString());
+        /*
+        if(clientFromListener.ReceiveBufferSize > 0){
+             recieved = new byte[clientFromListener.ReceiveBufferSize];
+             stream.Read(recieved, 0, clientFromListener.ReceiveBufferSize);             
+             string msg = System.Text.Encoding.ASCII.GetString(recieved); //the message incoming
+             Godot.GD.Print(msg);
+         }*/
+
+         
+        /*
+        for (int i=0;i<stream.Length;i++){
+            Godot.GD.Print(System.Convert.ToChar(recieved[i]));
+        }*/
+            
+    }
+    private async void acceptSocketCallbackCli(System.IAsyncResult result){
+        //Socket clientSocket = client.
+        Godot.GD.Print("Clienttt");
+        /*string testString = "hello!";
+            System.Text.ASCIIEncoding asen= new System.Text.ASCIIEncoding();
+            byte[] ba=asen.GetBytes(testString);
+            NetworkStream stm = client.GetStream();
+            stm.Write(ba,0,ba.Length);
+            */
+        client.EndConnect(result);
+        NetworkStream stm = client.GetStream();
+        string strr = "";
+        if(client.ReceiveBufferSize > 0){
+             recieved = new byte[client.ReceiveBufferSize];
+             stm.Read(recieved, 0, client.ReceiveBufferSize);             
+             strr = System.Text.Encoding.ASCII.GetString(recieved); //the message incoming
+             Godot.GD.Print(strr);
+             Godot.GD.Print('\n');
+             stm.Flush();
+         }
+        determineNumberOfPlayersAndMyPortClient(strr);
+
+        
+    }
+    private void determineNumberOfPlayersAndMyPortClient(string info){
+        //this is a really bad way to do this, don't wanna think about structure rn tho.
+
+        string[] words = info.Split('-');
+        bool firstPort = false;
+        foreach (var word in words)
+        {
+            Godot.GD.Print($"<{word}>");
+            if(word == "J"){
+                continue;
+            }
+            if(word.Length > 4 && !firstPort){
+                mpm.setClientUDP(System.Convert.ToInt32(word));
+                firstPort = true;
+                continue;
+            }
+            if (word.Length > 4){
+                //mpm.ff;
+                mpm.setClientUDPHost(System.Convert.ToInt32(word));
+                continue;
+            }
+            return;
+
+        }
+
+    }
+    public void broadcastNewPlayerConnect(joinPacket newPlayer){
+
+    }
+    public void sendNewPlayerPortAndID(MPlayer newPlayer){
+        joinPacket pkt = new joinPacket();
+        pkt.playerID=newPlayer.id;
+        pkt.port = newPlayer.port;
+        pkt.hostUDPPort = mpm.getHostUDPPort();
+        string spacer = "-";
+        string strr = "J";
+        strr+=spacer;
+        strr+=pkt.port;
+        strr+=spacer;
+        strr+=pkt.hostUDPPort;
+        strr+=spacer;
+        strr+=pkt.playerID;
+        
+        System.Text.ASCIIEncoding asen= new System.Text.ASCIIEncoding();
+        byte[] ba=asen.GetBytes(strr);
+        NetworkStream stm = clientFromListener.GetStream();
+        stm.Write(ba,0,ba.Length);
+        stm.Flush();
+    }
 }
