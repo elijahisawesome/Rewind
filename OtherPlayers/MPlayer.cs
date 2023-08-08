@@ -8,19 +8,27 @@ public partial class MPlayer : MeshInstance3D
 	UDPRecieve recieve;
 	System.Net.Sockets.UdpClient client;
 	public int port;
+	public int hostPort;
 	public Vector3 Pos;
 	public Vector3 Rot;
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
 		Position = new Vector3(0,15,0);
-		
 	}
 	public void setRecieve(string IP){
 		client = new System.Net.Sockets.UdpClient();
+		client.Client.SetSocketOption(System.Net.Sockets.SocketOptionLevel.Socket, System.Net.Sockets.SocketOptionName.ReuseAddress, true);
+
+
 		recieve = new UDPRecieve(ref client);
 		send = new UDPSend(ref client);
-		recieve.Connect(IP, port);
+		GD.Print("hostPort");
+		GD.Print(hostPort);
+		GD.Print(port);
+		GD.Print("port");
+		recieve.Connect(IP, hostPort);
+		send.Connect(IP, port);
 	}
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
@@ -28,7 +36,7 @@ public partial class MPlayer : MeshInstance3D
 	}
 
 	public void hostTransmitPositionToPlayers(RecievedDataStruct str){
-		//send.sendData(str);
+		send.sendData(str, send.RemoteIpEndPoint);
 	}
 	public async System.Threading.Tasks.Task recieveOrientation(){
 		await recieve.RecieveData();
@@ -46,6 +54,7 @@ public partial class MPlayer : MeshInstance3D
 		try{
 			Vector3 pos = new Vector3(packet.px.ToFloat(),packet.py.ToFloat(),packet.pz.ToFloat());
 			Position = pos;
+			//GD.Print(new Vector3(packet.px.ToFloat(),packet.py.ToFloat(),packet.pz.ToFloat()));
 		}
 		catch(Exception e){
 			GD.PrintErr(e);

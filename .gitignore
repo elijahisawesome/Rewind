@@ -1,2 +1,4 @@
 # Godot 4+ specific ignores
 .godot/
+.build1.exe
+.build1.console.exe

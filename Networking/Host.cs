@@ -7,11 +7,15 @@ public class UDPRecieve{
     byte[] recieved;
     RecievedDataStruct clientPacket = new RecievedDataStruct();
 
-    System.Net.IPEndPoint RemoteIpEndPoint;
+    public System.Net.IPEndPoint LocalIpEndPoint;
+
+
     UdpClient udpClient;
 
     public UDPRecieve(ref UdpClient client){
         udpClient = client;
+        //udpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+
     }
     public async System.Threading.Tasks.Task RecieveData(){
         try{
@@ -26,19 +30,19 @@ public class UDPRecieve{
         
     }
     public void Connect(string ip, int port){
-        RemoteIpEndPoint = new  System.Net.IPEndPoint(System.Net.IPAddress.Any, port);
-        udpClient.Client.Bind(RemoteIpEndPoint);
+        LocalIpEndPoint = new  System.Net.IPEndPoint(System.Net.IPAddress.Loopback, port);
+        udpClient.Client.Bind(LocalIpEndPoint);
         //udpClient.Connect(ip,port);
     }
     private void recv(System.IAsyncResult result){
-        recieved = udpClient.EndReceive(result, ref RemoteIpEndPoint);
-        GD.Print("Byte recieved");
+        recieved = udpClient.EndReceive(result, ref LocalIpEndPoint);
+        //GD.Print("Byte recieved");
         processPacket(); 
     }
     private void processPacket(){
         string data = System.Text.Encoding.ASCII.GetString(recieved);
         string [] splitData = data.Split("/");
-        GD.Print(data);
+        //GD.Print(data);
 
         clientPacket.clientNumber = splitData[0].ToInt();
         clientPacket.px = splitData[1];

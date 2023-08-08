@@ -9,7 +9,7 @@ public class TCPConnection{
     TcpListener listener;
     MultiplayerManager mpm;
     byte[] recieved;
-    int defaultPort = 11001;
+    int defaultPort = 11002;
 
     bool isServer = false;
 
@@ -17,7 +17,7 @@ public class TCPConnection{
         isServer = setIsServer;
         mpm = _mpm;
     }
-    public async void Connect(string address){
+    public async System.Threading.Tasks.Task Connect(string address){
         if(isServer){
             Godot.GD.Print("Fuck!");
             System.Net.IPAddress localAddr = System.Net.IPAddress.Parse("127.0.0.1");
@@ -84,24 +84,31 @@ public class TCPConnection{
     private void determineNumberOfPlayersAndMyPortClient(string info){
         //this is a really bad way to do this, don't wanna think about structure rn tho.
 
-        string[] words = info.Split('-');
+        string[] words = info.Split('/');
         bool firstPort = false;
+        bool secondPort = false;
+        int x =0;
         foreach (var word in words)
         {
-            Godot.GD.Print($"<{word}>");
             if(word == "J"){
+                x++;
                 continue;
             }
             if(word.Length > 4 && !firstPort){
                 mpm.setClientUDP(System.Convert.ToInt32(word));
                 firstPort = true;
+                x++;
                 continue;
             }
-            if (word.Length > 4){
+            if (word.Length > 4 && !secondPort){
                 //mpm.ff;
                 mpm.setClientUDPHost(System.Convert.ToInt32(word));
+                secondPort = true;
+                x++;
                 continue;
             }
+            
+
             return;
 
         }
@@ -110,12 +117,12 @@ public class TCPConnection{
     public void broadcastNewPlayerConnect(joinPacket newPlayer){
 
     }
-    public void sendNewPlayerPortAndID(MPlayer newPlayer){
+    public void sendNewPlayerPortAndID(MPlayer newPlayer, Godot.Vector3 hostPos){
         joinPacket pkt = new joinPacket();
         pkt.playerID=newPlayer.id;
         pkt.port = newPlayer.port;
         pkt.hostUDPPort = mpm.getHostUDPPort();
-        string spacer = "-";
+        string spacer = "/";
         string strr = "J";
         strr+=spacer;
         strr+=pkt.port;
@@ -123,6 +130,8 @@ public class TCPConnection{
         strr+=pkt.hostUDPPort;
         strr+=spacer;
         strr+=pkt.playerID;
+        strr+=spacer;
+        strr+=hostPos.X.ToString() + "/"+ hostPos.Y.ToString() +"/"+ hostPos.Z.ToString();
         
         System.Text.ASCIIEncoding asen= new System.Text.ASCIIEncoding();
         byte[] ba=asen.GetBytes(strr);

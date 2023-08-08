@@ -7,6 +7,7 @@ public partial class MultiplayerManager : Node
 {
 	Player localPlayer;
 	MPlayer [] mPlayers;
+	MPlayer host;
 	int playerCount = 0;
 	int maxPlayerCount = 4;
 	int defaultUDPPort = 11003;
@@ -31,22 +32,46 @@ public partial class MultiplayerManager : Node
 		UI = GetParent<Node>().GetNode<ConnectScreenUI>("Player/ConnectScreenUI");
 		player = GetParent<Node>().GetNode<Player>("Player");
 	}
-	public void connectClient(string adr){
+	public async void connectClient(string adr){
 		connection = new TCPConnection(false, this);
-		connection.Connect(adr);
-		//clientSend.SendConnect();
+		await connection.Connect(adr);
+		spawnHost();
+	}
+	private void spawnHost(){
+		
+		string path = "res://OtherPlayers/MPlayer.tscn";
+		PackedScene packedScene = GD.Load<PackedScene>(path);
+		host = packedScene.Instantiate<MPlayer>();
+		host.Position = new Vector3(0,15,0);
+
+		CallDeferred("add_child",(host));
+		GD.Print("Host spawns");
 	}
 	public void setClientUDP(int newUDPPort){
-			udpClient = new UdpClient(defaultUDPPort);
+			GD.Print("PORT");
+			GD.Print(newUDPPort);
+			GD.Print("PORT");
+			udpClient = new UdpClient();
+			udpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
 
-			clientSend = new UDPSend(ref udpClient);
-			clientSend.Connect(hostAddress, newUDPPort);
-			hostRecieve = new UDPRecieve(ref udpClient);
+					hostRecieve = new UDPRecieve(ref udpClient);
+		hostRecieve.Connect("",newUDPPort);
+	}
+	public void setExistingPlayers(){
+		
 	}
 	public void setHostAddress(string hA){
 		hostAddress = hA;
 	}
 	public void setClientUDPHost(int newUDPPort){
+			GD.Print("Local");
+			GD.Print(newUDPPort);
+			GD.Print("Local");
+
+		
+			clientSend = new UDPSend(ref udpClient);
+			clientSend.Connect(hostAddress, newUDPPort);
+
 		//udpClientHost = new UdpClient(newUDPPort);
 		//hostRecieve = new UDPRecieve(ref udpClientHost);
 	}
@@ -59,25 +84,20 @@ public partial class MultiplayerManager : Node
 				packet.px = player.Position.X.ToString();
 				packet.py = player.Position.Y.ToString();
 				packet.pz = player.Position.Z.ToString();
-				clientSend.sendData(packet);
+				clientSend.sendData(packet,clientSend.RemoteIpEndPoint);
+			
+				RecievedDataStruct returnPacket = new RecievedDataStruct();
+				await hostRecieve.RecieveData();
+				returnPacket = hostRecieve.getPacket();
+				if(returnPacket.clientNumber > maxPlayerCount){
+				host.setOrientation(returnPacket);
+			}
 			}
 			catch(Exception e){
+				GD.PrintErr(e);
+			}
 
-			}
-			//Genericize
-			/*
-			clientSend.iterate();
-			clientSend.SendDataTest();
-			*/
-			RecievedDataStruct returnPacket = new RecievedDataStruct();
-			await hostRecieve.RecieveData();
-			returnPacket = hostRecieve.getPacket();
-			try{
-				//GD.Print(returnPacket.px);
-			}
-			catch(Exception e){
-				GD.Print(e);
-			}
+
 		}
 		else if(UI.isHosting()){
 			if(playerSpawnQueue){
@@ -96,11 +116,12 @@ public partial class MultiplayerManager : Node
 			}
 
 			//Fix this shit later
-			
+			//Get Orientation of all clients
 			for(int x = 0; x<playerCount; x++){
 				await mPlayers[x].recieveOrientation();
 				//mPlayers[x].setOrientation();
 			}
+			//Broadcast Orientation of self and all clients to all other clients
 			for(int x = 0; x<playerCount; x++){
 				RecievedDataStruct packet = new RecievedDataStruct();
 				packet.clientNumber=x;
@@ -110,6 +131,16 @@ public partial class MultiplayerManager : Node
 				packet.rotation = mPlayers[x].Rotation.ToString();
 				//Godot.GD.Print("Hey!");
 				//Godot.GD.Print(mPlayers[x].ToString());
+				//GD.Print(mPlayers[x].port);
+				//mPlayers[x].hostTransmitPositionToPlayers(packet);
+			}
+			for(int x = 0; x<playerCount; x++){
+				RecievedDataStruct packet = new RecievedDataStruct();
+				packet.clientNumber = maxPlayerCount+1;
+				packet.px = player.Position.X.ToString();
+				packet.py = player.Position.Y.ToString();
+				packet.pz = player.Position.Z.ToString();
+				packet.rotation = player.Rotation.ToString();
 				mPlayers[x].hostTransmitPositionToPlayers(packet);
 			}
 		}
@@ -132,7 +163,8 @@ public partial class MultiplayerManager : Node
 		MPlayer newPlayer = packedScene.Instantiate<MPlayer>();
 		if(playerCount < maxPlayerCount){
 			newPlayer.id = playerCount;
-			newPlayer.port = defaultUDPPort+playerCount;
+			newPlayer.port = defaultUDPPort+1+playerCount;
+			newPlayer.hostPort = defaultUDPPort;
 			mPlayers[playerCount] = newPlayer;
 			//mPlayers[playerCount].id = playerCount;
 			
@@ -149,10 +181,10 @@ public partial class MultiplayerManager : Node
 		}
 
 	}
-	public void setHosting(){
+	public async void setHosting(){
 		hosting = true;
 		connection = new TCPConnection(true, this);
-		connection.Connect("");
+		await connection.Connect("");
 	}
 
 	//Send all relavent info to all mPlayers;
@@ -160,7 +192,7 @@ public partial class MultiplayerManager : Node
 
 	}
 	private void welcomeNewPlayer(MPlayer newPlayer){
-		connection.sendNewPlayerPortAndID(newPlayer);
+		connection.sendNewPlayerPortAndID(newPlayer, player.Position);
 	}
 	private void broadcastConnect(){
 		for(int x = 0; x<playerCount; x++){
