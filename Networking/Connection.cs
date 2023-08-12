@@ -9,7 +9,7 @@ public class TCPConnection{
     TcpListener listener;
     MultiplayerManager mpm;
     byte[] recieved;
-    int defaultPort = 11002;
+    int defaultPort = 11001;
 
     bool isServer = false;
 

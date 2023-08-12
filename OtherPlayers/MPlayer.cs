@@ -11,10 +11,12 @@ public partial class MPlayer : MeshInstance3D
 	public int hostPort;
 	public Vector3 Pos;
 	public Vector3 Rot;
+	public Rid playerID;
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
 		Position = new Vector3(0,15,0);
+		playerID = GetChild<CharacterBody3D>(1).GetRid();
 	}
 	public void setRecieve(string IP){
 		client = new System.Net.Sockets.UdpClient();
@@ -37,6 +39,9 @@ public partial class MPlayer : MeshInstance3D
 
 	public void hostTransmitPositionToPlayers(RecievedDataStruct str){
 		send.sendData(str, send.RemoteIpEndPoint);
+	}
+	public void transmitDamageToPlayers(playerHitPacket packet){
+		send.sendData(packet, send.RemoteIpEndPoint);
 	}
 	public async System.Threading.Tasks.Task recieveOrientation(){
 		await recieve.RecieveData();

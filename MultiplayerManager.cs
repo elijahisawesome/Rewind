@@ -199,5 +199,14 @@ public partial class MultiplayerManager : Node
 			
 		}
 	}
+	public void playerHit(int hitPlayersID, int attackersID){
+		for(int x = 0; x<playerCount; x++){
+			playerHitPacket packet = new playerHitPacket();
+			packet.attackerID = attackersID;
+			packet.recieverID = hitPlayersID;
+			packet.damage = 20;
+			mPlayers[x].transmitDamageToPlayers(packet);
+		}
+	}
 	//public void 
 }

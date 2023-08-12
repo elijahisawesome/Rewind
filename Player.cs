@@ -6,11 +6,17 @@ public partial class Player : CharacterBody3D
 
 	public const float Speed = 5.0f;
 	public const float JumpVelocity = 4.5f;
-
+	public Rid playerRid;
+	public int id;
+	MultiplayerManager mpm;
 	// Get the gravity from the project settings to be synced with RigidBody nodes.
 	public float gravity = ProjectSettings.GetSetting("physics/3d/default_gravity").AsSingle();
-
-	public override void _PhysicsProcess(double delta)
+    public override void _Ready()
+    {
+		//mpm = GetParent<Node>().GetChild<MultiplayerManager>(2);
+        playerRid = GetRid();
+    }
+    public override void _PhysicsProcess(double delta)
 	{
 		Vector3 velocity = Velocity;
 
@@ -39,5 +45,15 @@ public partial class Player : CharacterBody3D
 
 		Velocity = velocity;
 		MoveAndSlide();
+	}
+	public void takeDamage(){
+		//display some kinda damage indicator
+
+		//alter health
+
+		//etc
+	}
+	public void enemyHit(MPlayer target){
+		mpm.playerHit(target.id, id);
 	}
 }

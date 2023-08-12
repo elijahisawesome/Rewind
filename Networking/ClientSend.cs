@@ -40,7 +40,7 @@ public class UDPSend{
         sendBytesTest = System.Text.Encoding.ASCII.GetBytes(newTestString);
     }
     public void sendData(RecievedDataStruct packet, IPEndPoint rEP){
-        string d ="";
+        string d ="m";
         string deliminator = "/";
         d+=packet.clientNumber;
         d+=deliminator;
@@ -54,5 +54,8 @@ public class UDPSend{
         //Godot.GD.Print(d);
         sendBytes = System.Text.Encoding.ASCII.GetBytes(d);
         udpClient.Client.SendTo(sendBytes, RemoteIpEndPoint);
+    }
+    public void sendData(playerHitPacket packet, IPEndPoint rEP){
+
     }
 }

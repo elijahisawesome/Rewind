@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://dcvvdhk1qgkv"]
+
+[ext_resource type="Script" path="res://OtherPlayers/ListOfMPlayers.cs" id="1_ks34w"]
+
+[node name="ListOfMPlayers" type="Node3D"]
+script = ExtResource("1_ks34w")

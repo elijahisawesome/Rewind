@@ -6,6 +6,7 @@ using Godot;
 public class UDPRecieve{
     byte[] recieved;
     RecievedDataStruct clientPacket = new RecievedDataStruct();
+    playerHitPacket hitPacket = new playerHitPacket();
 
     public System.Net.IPEndPoint LocalIpEndPoint;
 
@@ -42,13 +43,21 @@ public class UDPRecieve{
     private void processPacket(){
         string data = System.Text.Encoding.ASCII.GetString(recieved);
         string [] splitData = data.Split("/");
+
+        if(splitData[0] == "d"){
+            //damage calc
+            clientPacket.clientNumber = splitData[1].ToInt();
+            clientPacket.px = splitData[2];
+            clientPacket.py = splitData[3];
+            clientPacket.pz = splitData[4];
+            clientPacket.rotation = splitData[5];
+        }
+        else if(splitData[0] == "m"){
+            //movement
+        }
         //GD.Print(data);
 
-        clientPacket.clientNumber = splitData[0].ToInt();
-        clientPacket.px = splitData[1];
-        clientPacket.py = splitData[2];
-        clientPacket.pz = splitData[3];
-        clientPacket.rotation = splitData[4];
+
     }
     public RecievedDataStruct getPacket(){
         return clientPacket;

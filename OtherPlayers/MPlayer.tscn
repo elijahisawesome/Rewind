@@ -1,10 +1,20 @@
-[gd_scene load_steps=3 format=3 uid="uid://cvpcpwe72yayl"]
+[gd_scene load_steps=4 format=3 uid="uid://cvpcpwe72yayl"]
 
 [ext_resource type="Script" path="res://OtherPlayers/MPlayer.cs" id="1_c6g7m"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_u4twl"]
 
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_2op3r"]
+
 [node name="MPlayer" type="MeshInstance3D"]
+script = ExtResource("1_c6g7m")
+
+[node name="MPlayer" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 mesh = SubResource("CapsuleMesh_u4twl")
-script = ExtResource("1_c6g7m")
+
+[node name="CharacterBody3D" type="CharacterBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CapsuleShape3D_2op3r")

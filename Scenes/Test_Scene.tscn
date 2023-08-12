@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://cbdo7usde1jco"]
+[gd_scene load_steps=5 format=3 uid="uid://cbdo7usde1jco"]
 
 [ext_resource type="PackedScene" uid="uid://c7a2h5mckfou4" path="res://Environments/test_environ.tscn" id="1_nkkip"]
 [ext_resource type="PackedScene" uid="uid://iyeds18qvhoc" path="res://LocalPlayer/Player.tscn" id="2_sydl0"]
 [ext_resource type="PackedScene" uid="uid://khyelnfkst7y" path="res://Networking/MultiplayerManager.tscn" id="3_six7g"]
+[ext_resource type="PackedScene" uid="uid://cvpcpwe72yayl" path="res://OtherPlayers/MPlayer.tscn" id="4_l8fcv"]
 
 [node name="Test_Scene" type="Node"]
 
@@ -12,3 +13,6 @@
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 14.8358, 0)
 
 [node name="MultiplayerManager" parent="." instance=ExtResource("3_six7g")]
+
+[node name="MPlayer" parent="." instance=ExtResource("4_l8fcv")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.68571, 13.4835, -7.19036)
