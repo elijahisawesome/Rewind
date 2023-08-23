@@ -56,6 +56,16 @@ public class UDPSend{
         udpClient.Client.SendTo(sendBytes, RemoteIpEndPoint);
     }
     public void sendData(playerHitPacket packet, IPEndPoint rEP){
+        string d ="d";
+        string deliminator = "/";
+        d+=deliminator;
+        d+=packet.attackerID;
+        d+=deliminator;
+        d+=packet.recieverID;
+        d+=deliminator;
+        d+=packet.damage;
 
+        sendBytes = System.Text.Encoding.ASCII.GetBytes(d);
+        udpClient.Client.SendTo(sendBytes, RemoteIpEndPoint);
     }
 }

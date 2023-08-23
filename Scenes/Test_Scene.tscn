@@ -15,4 +15,3 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 14.8358, 0)
 [node name="MultiplayerManager" parent="." instance=ExtResource("3_six7g")]
 
 [node name="MPlayer" parent="." instance=ExtResource("4_l8fcv")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.68571, 13.4835, -7.19036)

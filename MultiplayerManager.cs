@@ -20,6 +20,7 @@ public partial class MultiplayerManager : Node
 	public UDPRecieve hostRecieve;
 	public ConnectScreenUI UI;
 	public string hostAddress;
+	public int clientNumber = 1;
 	TCPConnection connection;
 	Player player;
 
@@ -43,6 +44,9 @@ public partial class MultiplayerManager : Node
 		PackedScene packedScene = GD.Load<PackedScene>(path);
 		host = packedScene.Instantiate<MPlayer>();
 		host.Position = new Vector3(0,15,0);
+		host.id = maxPlayerCount+1;
+		host.hostPort = 11111;
+		host.port = 22222;
 
 		CallDeferred("add_child",(host));
 		GD.Print("Host spawns");
@@ -79,19 +83,29 @@ public partial class MultiplayerManager : Node
 	{
 		if(UI.isConnected() && udpClient != null){
 			try{
-				
 				RecievedDataStruct packet = new RecievedDataStruct();
+				packet.clientNumber = clientNumber;
 				packet.px = player.Position.X.ToString();
 				packet.py = player.Position.Y.ToString();
 				packet.pz = player.Position.Z.ToString();
 				clientSend.sendData(packet,clientSend.RemoteIpEndPoint);
 			
 				RecievedDataStruct returnPacket = new RecievedDataStruct();
+				playerHitPacket returnHitPacket = new playerHitPacket();
 				await hostRecieve.RecieveData();
-				returnPacket = hostRecieve.getPacket();
-				if(returnPacket.clientNumber > maxPlayerCount){
-				host.setOrientation(returnPacket);
-			}
+				if(hostRecieve.packetType == 'm'){
+					returnPacket = hostRecieve.getMovePacket();
+					if(returnPacket.clientNumber > maxPlayerCount){
+					host.setOrientation(returnPacket);
+					}
+				}
+				else if(hostRecieve.packetType == 'd'){
+					returnHitPacket = hostRecieve.getHitPacket();
+					if(returnHitPacket.recieverID == player.id){
+						player.takeDamage(returnHitPacket);
+					}
+				}
+				
 			}
 			catch(Exception e){
 				GD.PrintErr(e);
@@ -106,19 +120,35 @@ public partial class MultiplayerManager : Node
 				GD.Print(playerCount);
 				playerSpawnQueue = false;
 			}
-			try{
-				RecievedDataStruct packet = new RecievedDataStruct();
-				await hostRecieve.RecieveData();
-				packet = hostRecieve.getPacket();
-			}
-			catch(Exception e){
+			/*
+				try{
+					RecievedDataStruct packet = new RecievedDataStruct();
+					await hostRecieve.RecieveData();
 
-			}
+					if(hostRecieve.packetType == 'm'){
+						packet = hostRecieve.getPacket();
+					}
+					else if(hostRecieve.packetType == 'd'){
 
+					}
+
+					
+				}
+				catch(Exception e){
+
+				}
+			*/
 			//Fix this shit later
 			//Get Orientation of all clients
 			for(int x = 0; x<playerCount; x++){
-				await mPlayers[x].recieveOrientation();
+				await mPlayers[x].recieveUDPPacket();
+				char packetType = mPlayers[x].getPacketType();
+				if(packetType == 'm'){
+					mPlayers[x].recieveOrientation();
+				}
+				else if(packetType == 'd'){
+					mPlayers[x].recieveDamage();
+				}
 				//mPlayers[x].setOrientation();
 			}
 			//Broadcast Orientation of self and all clients to all other clients
@@ -136,7 +166,7 @@ public partial class MultiplayerManager : Node
 			}
 			for(int x = 0; x<playerCount; x++){
 				RecievedDataStruct packet = new RecievedDataStruct();
-				packet.clientNumber = maxPlayerCount+1;
+				packet.clientNumber = clientNumber;
 				packet.px = player.Position.X.ToString();
 				packet.py = player.Position.Y.ToString();
 				packet.pz = player.Position.Z.ToString();
@@ -183,8 +213,14 @@ public partial class MultiplayerManager : Node
 	}
 	public async void setHosting(){
 		hosting = true;
+		clientNumber = maxPlayerCount+1;
+		player.id = maxPlayerCount+1;
 		connection = new TCPConnection(true, this);
 		await connection.Connect("");
+	}
+	public void setPlayerAndMPMID(int id){
+		player.id = id;
+		clientNumber = id;
 	}
 
 	//Send all relavent info to all mPlayers;
@@ -200,13 +236,24 @@ public partial class MultiplayerManager : Node
 		}
 	}
 	public void playerHit(int hitPlayersID, int attackersID){
-		for(int x = 0; x<playerCount; x++){
+		if(hosting){
+			for(int x = 0; x<playerCount; x++){
+				GD.Print("SHOOTING");
+				playerHitPacket packet = new playerHitPacket();
+				packet.attackerID = attackersID;
+				packet.recieverID = hitPlayersID;
+				packet.damage = 20;
+				mPlayers[x].transmitDamageToPlayers(packet);
+			}
+		}
+		else{
 			playerHitPacket packet = new playerHitPacket();
 			packet.attackerID = attackersID;
 			packet.recieverID = hitPlayersID;
 			packet.damage = 20;
-			mPlayers[x].transmitDamageToPlayers(packet);
+			clientSend.sendData(packet,clientSend.RemoteIpEndPoint);
 		}
+
 	}
 	//public void 
 }

@@ -7,16 +7,19 @@ public partial class MPlayer : MeshInstance3D
 	UDPSend send;
 	UDPRecieve recieve;
 	System.Net.Sockets.UdpClient client;
+	Player localPlayer;
 	public int port;
 	public int hostPort;
 	public Vector3 Pos;
 	public Vector3 Rot;
 	public Rid playerID;
+	char packetType = '\0';
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
-		Position = new Vector3(0,15,0);
+		Position = new Vector3(3,15,3);
 		playerID = GetChild<CharacterBody3D>(1).GetRid();
+		localPlayer = GetNode<Player>("../../Player");
 	}
 	public void setRecieve(string IP){
 		client = new System.Net.Sockets.UdpClient();
@@ -43,17 +46,23 @@ public partial class MPlayer : MeshInstance3D
 	public void transmitDamageToPlayers(playerHitPacket packet){
 		send.sendData(packet, send.RemoteIpEndPoint);
 	}
-	public async System.Threading.Tasks.Task recieveOrientation(){
+	public char getPacketType(){
+		return packetType;
+	}
+	public async System.Threading.Tasks.Task recieveUDPPacket(){
 		await recieve.RecieveData();
-		var packet = recieve.getPacket();
+		packetType = recieve.packetType;
+		recieve.resetPacketType();
 
-/*
-		GD.Print(packet.clientNumber);
-		GD.Print(packet.px);
-		GD.Print(packet.py);
-		GD.Print(packet.pz);
-*/
+//		
+	}
+	public void recieveOrientation(){
+		var packet = recieve.getMovePacket();
 		setOrientation(packet);
+	}
+	public void recieveDamage(){
+		var packet = recieve.getHitPacket();
+		setDamage(packet);
 	}
 	public void setOrientation(RecievedDataStruct packet){
 		try{
@@ -65,5 +74,11 @@ public partial class MPlayer : MeshInstance3D
 			GD.PrintErr(e);
 		}
 
+	}
+	void setDamage(playerHitPacket pkt){
+		//remove hard coding and add code for other players
+		if(pkt.recieverID == 5){
+			localPlayer.takeDamage(pkt);
+		}
 	}
 }

@@ -1,6 +1,8 @@
+using System.Diagnostics;
 using System.Net.Sockets;
 using System.Text.Encodings;
 using System.Threading;
+using Godot;
 
 public class TCPConnection{
     
@@ -9,7 +11,7 @@ public class TCPConnection{
     TcpListener listener;
     MultiplayerManager mpm;
     byte[] recieved;
-    int defaultPort = 11001;
+    int defaultPort = 11002;
 
     bool isServer = false;
 
@@ -29,7 +31,7 @@ public class TCPConnection{
             client = new TcpClient();
             //client.Connect(address,defaultPort);
             
-            client.BeginConnect(address,11002,new System.AsyncCallback(acceptSocketCallbackCli),client);
+            client.BeginConnect(address,11001,new System.AsyncCallback(acceptSocketCallbackCli),client);
 
         }
     }
@@ -94,6 +96,10 @@ public class TCPConnection{
                 x++;
                 continue;
             }
+            if(word[0] == 'I'){
+                //mpm.clientNumber = word[1].ToString().ToInt();
+                mpm.setPlayerAndMPMID(word[1].ToString().ToInt());
+            }
             if(word.Length > 4 && !firstPort){
                 mpm.setClientUDP(System.Convert.ToInt32(word));
                 firstPort = true;
@@ -129,6 +135,7 @@ public class TCPConnection{
         strr+=spacer;
         strr+=pkt.hostUDPPort;
         strr+=spacer;
+        strr+= "I";
         strr+=pkt.playerID;
         strr+=spacer;
         strr+=hostPos.X.ToString() + "/"+ hostPos.Y.ToString() +"/"+ hostPos.Z.ToString();

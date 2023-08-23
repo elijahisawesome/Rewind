@@ -13,7 +13,7 @@ public partial class Player : CharacterBody3D
 	public float gravity = ProjectSettings.GetSetting("physics/3d/default_gravity").AsSingle();
     public override void _Ready()
     {
-		//mpm = GetParent<Node>().GetChild<MultiplayerManager>(2);
+		mpm = GetParent<Node>().GetChild<MultiplayerManager>(2);
         playerRid = GetRid();
     }
     public override void _PhysicsProcess(double delta)
@@ -46,14 +46,20 @@ public partial class Player : CharacterBody3D
 		Velocity = velocity;
 		MoveAndSlide();
 	}
-	public void takeDamage(){
+	public void takeDamage(playerHitPacket pkt){
 		//display some kinda damage indicator
-
+		GD.Print("Shot thru the heart, and youre to blame. Uopi give loooove a bad name, da nua na an aa na na na na");
+		GD.Print(pkt.damage);
+		Velocity = (Transform.Basis * new Vector3(500,0,500));
+		MoveAndSlide();
 		//alter health
 
 		//etc
 	}
 	public void enemyHit(MPlayer target){
+		GD.Print(target.port);
+		GD.Print(target.hostPort);
+		GD.Print(target.id);
 		mpm.playerHit(target.id, id);
 	}
 }

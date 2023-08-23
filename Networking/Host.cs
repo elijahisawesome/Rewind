@@ -8,6 +8,8 @@ public class UDPRecieve{
     RecievedDataStruct clientPacket = new RecievedDataStruct();
     playerHitPacket hitPacket = new playerHitPacket();
 
+    public char packetType = '\0';
+
     public System.Net.IPEndPoint LocalIpEndPoint;
 
 
@@ -43,24 +45,41 @@ public class UDPRecieve{
     private void processPacket(){
         string data = System.Text.Encoding.ASCII.GetString(recieved);
         string [] splitData = data.Split("/");
-
-        if(splitData[0] == "d"){
+        //GD.Print(splitData[1]);
+        //GD.Print(splitData[2]);
+        //GD.Print(splitData[3]);
+        //GD.Print(splitData[4]);
+        //GD.Print(data);
+        if(splitData[0][0].ToString() == "d"){
             //damage calc
-            clientPacket.clientNumber = splitData[1].ToInt();
-            clientPacket.px = splitData[2];
-            clientPacket.py = splitData[3];
-            clientPacket.pz = splitData[4];
-            clientPacket.rotation = splitData[5];
+            GD.Print("Hit!");
+            packetType = 'd';
+            hitPacket.attackerID = splitData[1].ToInt();
+            hitPacket.recieverID = splitData[2].ToInt();
+            hitPacket.damage = splitData[3].ToInt();
         }
-        else if(splitData[0] == "m"){
+        else if(splitData[0][0].ToString() == "m"){
             //movement
+            //GD.Print(splitData[0]);
+            packetType = 'm';
+            clientPacket.clientNumber = splitData[0][1].ToString().ToInt();
+            clientPacket.px = splitData[1];
+            clientPacket.py = splitData[2];
+            clientPacket.pz = splitData[3];
+            clientPacket.rotation = splitData[4];
         }
         //GD.Print(data);
 
 
     }
-    public RecievedDataStruct getPacket(){
+    public RecievedDataStruct getMovePacket(){
         return clientPacket;
+    }
+    public playerHitPacket getHitPacket(){
+        return hitPacket;
+    }
+    public void resetPacketType(){
+        packetType = '\0';
     }
     public void clearBuffer(){
         
