@@ -31,7 +31,7 @@ public class TCPConnection{
             client = new TcpClient();
             //client.Connect(address,defaultPort);
             
-            client.BeginConnect(address,11001,new System.AsyncCallback(acceptSocketCallbackCli),client);
+            client.BeginConnect(address,defaultPort,new System.AsyncCallback(acceptSocketCallbackCli),client);
 
         }
     }
