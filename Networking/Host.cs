@@ -33,14 +33,22 @@ public class UDPRecieve{
         
     }
     public void Connect(string ip, int port){
+        GD.Print(ip);
+        GD.Print(port);
         LocalIpEndPoint = new  System.Net.IPEndPoint(System.Net.IPAddress.Loopback, port);
         udpClient.Client.Bind(LocalIpEndPoint);
         //udpClient.Connect(ip,port);
     }
     private void recv(System.IAsyncResult result){
-        recieved = udpClient.EndReceive(result, ref LocalIpEndPoint);
-        //GD.Print("Byte recieved");
-        processPacket(); 
+        try{
+            recieved = udpClient.EndReceive(result, ref LocalIpEndPoint);
+            //GD.Print("Byte recieved");
+            processPacket(); 
+        }
+        catch(SocketException e){
+            GD.Print(e);
+        }
+
     }
     private void processPacket(){
         string data = System.Text.Encoding.ASCII.GetString(recieved);

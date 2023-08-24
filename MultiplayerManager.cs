@@ -201,7 +201,6 @@ public partial class MultiplayerManager : Node
 			//GetParent<Node>().CallDeferred("add_child",mPlayers[playerCount]);
 			CallDeferred("add_child",(mPlayers[playerCount]));
 			GD.Print("Player COnnected");
-			playerCount++;
 			playerSpawnQueue = true;
 		}
 		if(hosting){

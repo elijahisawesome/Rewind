@@ -22,7 +22,7 @@ public class TCPConnection{
     public async System.Threading.Tasks.Task Connect(string address){
         if(isServer){
             Godot.GD.Print("Fuck!");
-            System.Net.IPAddress localAddr = System.Net.IPAddress.Parse("127.0.0.1");
+            //System.Net.IPAddress localAddr = System.Net.IPAddress.Parse("127.0.0.1");
             listener = new TcpListener(System.Net.IPAddress.Any,defaultPort);
             listener.Start();
             listener.BeginAcceptTcpClient(new System.AsyncCallback(acceptSocketCallbackServ), listener);
