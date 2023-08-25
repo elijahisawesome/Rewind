@@ -1,3 +1,4 @@
+using System;
 using System.Net.Sockets;
 using System.Text.Encodings;
 using System.Threading;
@@ -51,6 +52,7 @@ public class UDPRecieve{
 
     }
     private void processPacket(){
+        try{
         string data = System.Text.Encoding.ASCII.GetString(recieved);
         string [] splitData = data.Split("/");
         //GD.Print(splitData[1]);
@@ -76,6 +78,11 @@ public class UDPRecieve{
             clientPacket.pz = splitData[3];
             clientPacket.rotation = splitData[4];
         }
+        }
+        catch(Exception e){
+
+        }
+
         //GD.Print(data);
 
 
