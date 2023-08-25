@@ -33,9 +33,9 @@ public class UDPRecieve{
         
     }
     public void Connect(string ip, int port){
-        GD.Print(ip);
-        GD.Print(port);
-        LocalIpEndPoint = new  System.Net.IPEndPoint(System.Net.IPAddress.Loopback, port);
+        //GD.Print(ip);
+        //GD.Print(port);
+        LocalIpEndPoint = new  System.Net.IPEndPoint(System.Net.IPAddress.Any, port);
         udpClient.Client.Bind(LocalIpEndPoint);
         //udpClient.Connect(ip,port);
     }

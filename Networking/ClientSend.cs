@@ -2,7 +2,7 @@ using System.Net.Sockets;
 using System.Text.Encodings;
 using System.Threading;
 using System.Net;
-
+using Godot;
 
 public class UDPSend{
 
@@ -21,7 +21,8 @@ public class UDPSend{
         udpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
     }
     public bool Connect(string adr, int port){
-        RemoteIpEndPoint =  new IPEndPoint(IPAddress.Loopback, port);
+        //GD.Print(adr);
+        RemoteIpEndPoint =  new IPEndPoint(IPAddress.Parse(adr), port);
         //udpClient.Connect(adr, port);
         //Godot.GD.Print(adr);
 
@@ -51,9 +52,9 @@ public class UDPSend{
         d+=packet.pz;
         d+=deliminator;
         d+=packet.rotation;
-        //Godot.GD.Print(d);
+        //Godot.GD.Print(rEP);
         sendBytes = System.Text.Encoding.ASCII.GetBytes(d);
-        udpClient.Client.SendTo(sendBytes, RemoteIpEndPoint);
+        udpClient.Client.SendTo(sendBytes, rEP);
     }
     public void sendData(playerHitPacket packet, IPEndPoint rEP){
         string d ="d";

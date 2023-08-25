@@ -197,10 +197,11 @@ public partial class MultiplayerManager : Node
 			newPlayer.hostPort = defaultUDPPort;
 			mPlayers[playerCount] = newPlayer;
 			//mPlayers[playerCount].id = playerCount;
-			
+
 			//GetParent<Node>().CallDeferred("add_child",mPlayers[playerCount]);
 			CallDeferred("add_child",(mPlayers[playerCount]));
 			GD.Print("Player COnnected");
+			playerCount++;
 			playerSpawnQueue = true;
 		}
 		if(hosting){
