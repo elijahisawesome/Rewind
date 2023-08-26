@@ -8,7 +8,7 @@ using System.Net;
 public partial class ConnectScreenUI : Node
 {
 	Button button;
-	TextEdit tEdit;
+	LineEdit lEdit;
 	MultiplayerManager MPM;
 	public bool connected=false;
 	bool hosting = false;
@@ -17,41 +17,18 @@ public partial class ConnectScreenUI : Node
 	UdpClient test2;
 	public override void _Ready()
 	{
-		button = GetNode<Button>("SubViewportContainer/HBoxContainer/VBoxContainer/Button");
-		tEdit = GetNode<TextEdit>("SubViewportContainer/HBoxContainer/VBoxContainer/TextEdit");
+		button = GetNode<Button>("VBoxContainer/HBoxContainer/Button");
+		lEdit = GetNode<LineEdit>("VBoxContainer/HBoxContainer2/LineEdit");
 		MPM = GetParent().GetParent().GetNode<MultiplayerManager>("MultiplayerManager");
 		
-		/*
-		byte[] sendBytesTest = System.Text.Encoding.ASCII.GetBytes("Is anybody there?");
-		byte[] bytes = new byte[500];
-		test1 = new UdpClient();
-		test2 = new UdpClient();
-
-		//test1.Connect("127.0.0.1", 11000);
-		IPEndPoint RemoteIpEndPoint = new  IPEndPoint(System.Net.IPAddress.Loopback, 11001);
-
-		test2.Client.Bind(RemoteIpEndPoint);
-
-		//test2.Connect("127.0.0.1", 11001);
-		IPEndPoint remoteIpEndPoint = new  IPEndPoint(System.Net.IPAddress.Loopback, 11000);
-		test1.Client.Bind(remoteIpEndPoint);
-
-		test1.Client.SendTo(sendBytesTest, RemoteIpEndPoint);
-		int len = test2.Client.Receive( bytes);
-		foreach(var bytee in bytes)
-		{
-			GD.Print(bytee);
-		}
-		GD.Print(bytes);
-		*/
 	}
 
 	public override void _Process(double delta)
 	{
 	}
 	public void ConnectAttempt(){
-		MPM.setHostAddress(tEdit.Text);
-		MPM.connectClient(tEdit.Text);
+		MPM.setHostAddress(lEdit.Text);
+		MPM.connectClient(lEdit.Text);
 	}
 	public bool isConnected(){
 		return connected;

@@ -8,6 +8,7 @@ public partial class Camera3D : Godot.Camera3D
 	private float prevX;
 	private float prevY;
 	private float mouseAccel = .035f;
+	private float maxYaw;
 	private bool readyToMove;
 	public bool fireCheck;
 	public override void _Ready()
@@ -38,8 +39,11 @@ public partial class Camera3D : Godot.Camera3D
 		base._UnhandledInput(@event);
 		if(@event is InputEventMouseMotion&&readyToMove){
 			InputEventMouseMotion mouseEvent = @event as InputEventMouseMotion;
+
 			RotateX(-mouseEvent.Relative.Y * mouseAccel);
+			float newX = Math.Clamp(this.RotationDegrees[0], -90f, 90f);
 			GetParent<Player>().RotateY(-mouseEvent.Relative.X * mouseAccel);
+			this.RotationDegrees = new Vector3(newX, this.RotationDegrees[1], this.RotationDegrees[2]);
 		}
 		if(@event is InputEventMouseButton && Input.MouseMode == Input.MouseModeEnum.Visible){
 			Input.MouseMode = Input.MouseModeEnum.Captured;

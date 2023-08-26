@@ -1,9 +1,10 @@
-[gd_scene load_steps=8 format=3 uid="uid://iyeds18qvhoc"]
+[gd_scene load_steps=9 format=3 uid="uid://iyeds18qvhoc"]
 
 [ext_resource type="Script" path="res://Player.cs" id="1_g6hfm"]
 [ext_resource type="Script" path="res://Camera3D.cs" id="2_akrxr"]
 [ext_resource type="Script" path="res://Rewind.cs" id="3_t7raf"]
 [ext_resource type="PackedScene" uid="uid://cosyybq18f384" path="res://UI/ConnectScreenUI.tscn" id="4_xjscy"]
+[ext_resource type="Texture2D" uid="uid://j4w1b1y8ufpe" path="res://2DArt/xHair.png" id="4_y2sxu"]
 [ext_resource type="Script" path="res://LocalPlayer/Gun.cs" id="5_fchk4"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_an347"]
@@ -27,6 +28,24 @@ script = ExtResource("2_akrxr")
 
 [node name="Rewind" type="Node" parent="Camera3D"]
 script = ExtResource("3_t7raf")
+
+[node name="CenterContainer" type="CenterContainer" parent="Camera3D"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -5.0
+offset_top = -5.0
+offset_right = 5.0
+offset_bottom = 5.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TextureRect" type="TextureRect" parent="Camera3D/CenterContainer"]
+layout_mode = 2
+texture = ExtResource("4_y2sxu")
+stretch_mode = 3
 
 [node name="ConnectScreenUI" parent="." instance=ExtResource("4_xjscy")]
 
