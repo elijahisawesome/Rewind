@@ -9,15 +9,18 @@ public partial class Player : CharacterBody3D
 	public Rid playerRid;
 	public int id;
 	MultiplayerManager mpm;
+	himbo_base characterModel;
 	// Get the gravity from the project settings to be synced with RigidBody nodes.
 	public float gravity = ProjectSettings.GetSetting("physics/3d/default_gravity").AsSingle();
     public override void _Ready()
     {
 		mpm = GetParent<Node>().GetChild<MultiplayerManager>(2);
+		characterModel = GetChild<himbo_base>(5);
         playerRid = GetRid();
     }
     public override void _PhysicsProcess(double delta)
 	{
+
 		Vector3 velocity = Velocity;
 
 		// Add the gravity.
@@ -61,5 +64,28 @@ public partial class Player : CharacterBody3D
 		GD.Print(target.hostPort);
 		GD.Print(target.id);
 		mpm.playerHit(target.id, id);
+	}
+	public void determineAnimationAndBroadcast(ref RecievedDataStruct pkt){
+		if(Velocity.Length() > 1f){
+			pkt.anim = 'R';
+		}
+		else{
+			pkt.anim = 'I';
+		}
+	}
+	public void broadcastPosition(ref RecievedDataStruct pkt){
+		pkt.px = Position.X.ToString();
+		pkt.py = Position.Y.ToString();
+		pkt.pz = Position.Z.ToString();
+		pkt.rotation = Rotation.ToString();
+	}
+	public void slide(){
+
+	}
+	public void dash(){
+
+	}
+	public void climb(){
+
 	}
 }

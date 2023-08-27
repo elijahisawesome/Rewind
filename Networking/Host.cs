@@ -18,13 +18,9 @@ public class UDPRecieve{
 
     public UDPRecieve(ref UdpClient client){
         udpClient = client;
-        //udpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-
     }
     public async System.Threading.Tasks.Task RecieveData(){
         try{
-            //byte[] recieveBytes = await udpClient.ReceiveAsync(ref RemoteIpEndPoint);
-            //returnData = System.Text.Encoding.ASCII.GetString(recieveBytes);
             udpClient.BeginReceive(new System.AsyncCallback(recv),null);
             
         }
@@ -34,16 +30,12 @@ public class UDPRecieve{
         
     }
     public void Connect(string ip, int port){
-        //GD.Print(ip);
-        //GD.Print(port);
         LocalIpEndPoint = new  System.Net.IPEndPoint(System.Net.IPAddress.Any, port);
         udpClient.Client.Bind(LocalIpEndPoint);
-        //udpClient.Connect(ip,port);
     }
     private void recv(System.IAsyncResult result){
         try{
             recieved = udpClient.EndReceive(result, ref LocalIpEndPoint);
-            //GD.Print("Byte recieved");
             processPacket(); 
         }
         catch(SocketException e){
@@ -55,11 +47,6 @@ public class UDPRecieve{
         try{
         string data = System.Text.Encoding.ASCII.GetString(recieved);
         string [] splitData = data.Split("/");
-        //GD.Print(splitData[1]);
-        //GD.Print(splitData[2]);
-        //GD.Print(splitData[3]);
-        //GD.Print(splitData[4]);
-        //GD.Print(data);
         if(splitData[0][0].ToString() == "d"){
             //damage calc
             GD.Print("Hit!");
@@ -70,21 +57,18 @@ public class UDPRecieve{
         }
         else if(splitData[0][0].ToString() == "m"){
             //movement
-            //GD.Print(splitData[0]);
             packetType = 'm';
             clientPacket.clientNumber = splitData[0][1].ToString().ToInt();
-            clientPacket.px = splitData[1];
-            clientPacket.py = splitData[2];
-            clientPacket.pz = splitData[3];
-            clientPacket.rotation = splitData[4];
+            clientPacket.anim = splitData[1][0];
+            clientPacket.px = splitData[2];
+            clientPacket.py = splitData[3];
+            clientPacket.pz = splitData[4];
+            clientPacket.rotation = splitData[5];
         }
         }
         catch(Exception e){
 
         }
-
-        //GD.Print(data);
-
 
     }
     public RecievedDataStruct getMovePacket(){
@@ -99,9 +83,4 @@ public class UDPRecieve{
     public void clearBuffer(){
         
     }
-    public void sendPacket(){
-
-    }
-
-
 }

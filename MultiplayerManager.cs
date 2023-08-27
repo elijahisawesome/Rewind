@@ -75,9 +75,6 @@ public partial class MultiplayerManager : Node
 		
 			clientSend = new UDPSend(ref udpClient);
 			clientSend.Connect(hostAddress, newUDPPort);
-
-		//udpClientHost = new UdpClient(newUDPPort);
-		//hostRecieve = new UDPRecieve(ref udpClientHost);
 	}
 		public override async void _PhysicsProcess(double delta)
 	{
@@ -85,9 +82,9 @@ public partial class MultiplayerManager : Node
 			try{
 				RecievedDataStruct packet = new RecievedDataStruct();
 				packet.clientNumber = clientNumber;
-				packet.px = player.Position.X.ToString();
-				packet.py = player.Position.Y.ToString();
-				packet.pz = player.Position.Z.ToString();
+				player.broadcastPosition(ref packet);
+				player.determineAnimationAndBroadcast(ref packet);
+				
 				clientSend.sendData(packet,clientSend.RemoteIpEndPoint);
 			
 				RecievedDataStruct returnPacket = new RecievedDataStruct();
@@ -115,29 +112,10 @@ public partial class MultiplayerManager : Node
 		}
 		else if(UI.isHosting()){
 			if(playerSpawnQueue){
-				//CallDeferred("add_child",(mPlayers[0]));
 				GD.Print(mPlayers[0]);
 				GD.Print(playerCount);
 				playerSpawnQueue = false;
 			}
-			/*
-				try{
-					RecievedDataStruct packet = new RecievedDataStruct();
-					await hostRecieve.RecieveData();
-
-					if(hostRecieve.packetType == 'm'){
-						packet = hostRecieve.getPacket();
-					}
-					else if(hostRecieve.packetType == 'd'){
-
-					}
-
-					
-				}
-				catch(Exception e){
-
-				}
-			*/
 			//Fix this shit later
 			//Get Orientation of all clients
 			for(int x = 0; x<playerCount; x++){
@@ -149,7 +127,6 @@ public partial class MultiplayerManager : Node
 				else if(packetType == 'd'){
 					mPlayers[x].recieveDamage();
 				}
-				//mPlayers[x].setOrientation();
 			}
 			//Broadcast Orientation of self and all clients to all other clients
 			for(int x = 0; x<playerCount; x++){
@@ -159,29 +136,16 @@ public partial class MultiplayerManager : Node
 				packet.py = mPlayers[x].Position.Y.ToString();
 				packet.pz = mPlayers[x].Position.Z.ToString();
 				packet.rotation = mPlayers[x].Rotation.ToString();
-				//Godot.GD.Print("Hey!");
-				//Godot.GD.Print(mPlayers[x].ToString());
-				//GD.Print(mPlayers[x].port);
-				//mPlayers[x].hostTransmitPositionToPlayers(packet);
 			}
 			for(int x = 0; x<playerCount; x++){
 				RecievedDataStruct packet = new RecievedDataStruct();
 				packet.clientNumber = clientNumber;
-				packet.px = player.Position.X.ToString();
-				packet.py = player.Position.Y.ToString();
-				packet.pz = player.Position.Z.ToString();
-				packet.rotation = player.Rotation.ToString();
+				player.determineAnimationAndBroadcast(ref packet);
+				player.broadcastPosition(ref packet);
 				mPlayers[x].hostTransmitPositionToPlayers(packet);
 			}
 		}
 
-	}
-	public static Vector3 GetPositionFromPacket(RecievedDataStruct packet){
-			Vector3 Pos = new Vector3();
-				Pos[0] = packet.px.ToFloat();
-				Pos[1] = packet.py.ToFloat();
-				Pos[2] = packet.pz.ToFloat();
-				return Pos;
 	}
 	public int getHostUDPPort(){
 		return defaultUDPPort;
@@ -196,9 +160,6 @@ public partial class MultiplayerManager : Node
 			newPlayer.port = defaultUDPPort+1+playerCount;
 			newPlayer.hostPort = defaultUDPPort;
 			mPlayers[playerCount] = newPlayer;
-			//mPlayers[playerCount].id = playerCount;
-
-			//GetParent<Node>().CallDeferred("add_child",mPlayers[playerCount]);
 			CallDeferred("add_child",(mPlayers[playerCount]));
 			GD.Print("Player COnnected");
 			playerCount++;
@@ -223,10 +184,6 @@ public partial class MultiplayerManager : Node
 		clientNumber = id;
 	}
 
-	//Send all relavent info to all mPlayers;
-	private void broadcast(){
-
-	}
 	private void welcomeNewPlayer(MPlayer newPlayer){
 		connection.sendNewPlayerPortAndID(newPlayer, player.Position);
 	}
@@ -255,5 +212,4 @@ public partial class MultiplayerManager : Node
 		}
 
 	}
-	//public void 
 }

@@ -21,17 +21,14 @@ public class TCPConnection{
     }
     public async System.Threading.Tasks.Task Connect(string address){
         if(isServer){
-            Godot.GD.Print("Fuck!");
-            //System.Net.IPAddress localAddr = System.Net.IPAddress.Parse("127.0.0.1");
+            Godot.GD.Print("TCP RECIEVED!");
             listener = new TcpListener(System.Net.IPAddress.Any,defaultPort);
             listener.Start();
             listener.BeginAcceptTcpClient(new System.AsyncCallback(acceptSocketCallbackServ), listener);
         }
         else{
             client = new TcpClient();
-            //client.Connect(address,defaultPort);
-            
-            client.BeginConnect(address,defaultPort,new System.AsyncCallback(acceptSocketCallbackCli),client);
+            client.BeginConnect(address,11001,new System.AsyncCallback(acceptSocketCallbackCli),client);
 
         }
     }
@@ -44,30 +41,11 @@ public class TCPConnection{
         System.Net.IPEndPoint endPoint = clientFromListener.Client.RemoteEndPoint as System.Net.IPEndPoint;
         
         mpm.playerConnect(endPoint.Address.ToString());
-        /*
-        if(clientFromListener.ReceiveBufferSize > 0){
-             recieved = new byte[clientFromListener.ReceiveBufferSize];
-             stream.Read(recieved, 0, clientFromListener.ReceiveBufferSize);             
-             string msg = System.Text.Encoding.ASCII.GetString(recieved); //the message incoming
-             Godot.GD.Print(msg);
-         }*/
-
-         
-        /*
-        for (int i=0;i<stream.Length;i++){
-            Godot.GD.Print(System.Convert.ToChar(recieved[i]));
-        }*/
             
     }
     private async void acceptSocketCallbackCli(System.IAsyncResult result){
         //Socket clientSocket = client.
         Godot.GD.Print("Clienttt");
-        /*string testString = "hello!";
-            System.Text.ASCIIEncoding asen= new System.Text.ASCIIEncoding();
-            byte[] ba=asen.GetBytes(testString);
-            NetworkStream stm = client.GetStream();
-            stm.Write(ba,0,ba.Length);
-            */
         client.EndConnect(result);
         NetworkStream stm = client.GetStream();
         string strr = "";
@@ -97,7 +75,6 @@ public class TCPConnection{
                 continue;
             }
             if(word[0] == 'I'){
-                //mpm.clientNumber = word[1].ToString().ToInt();
                 mpm.setPlayerAndMPMID(word[1].ToString().ToInt());
             }
             if(word.Length > 4 && !firstPort){

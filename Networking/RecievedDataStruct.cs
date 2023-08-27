@@ -2,15 +2,15 @@ using System;
 
 public struct RecievedDataStruct{
     public char type;
+
+    public char anim;
     public int clientNumber;
     //public string position;
     public string px;
     public string py;
     public string pz;
     public string rotation;
-    public int recieverID;
-    public int attackerID;
-    public int damage;
+    
 }
 public struct playerHitPacket{
     public char type;

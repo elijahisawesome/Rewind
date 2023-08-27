@@ -1,5 +1,7 @@
 using Godot;
 using System;
+using System.Diagnostics;
+
 
 public partial class MPlayer : MeshInstance3D
 {
@@ -8,6 +10,7 @@ public partial class MPlayer : MeshInstance3D
 	UDPRecieve recieve;
 	System.Net.Sockets.UdpClient client;
 	Player localPlayer;
+	himbo_base characterModel;
 	public int port;
 	public int hostPort;
 	public Vector3 Pos;
@@ -20,6 +23,7 @@ public partial class MPlayer : MeshInstance3D
 		Position = new Vector3(3,15,3);
 		playerID = GetChild<CharacterBody3D>(1).GetRid();
 		localPlayer = GetNode<Player>("../../Player");
+		characterModel = GetChild<himbo_base>(2);
 	}
 	public void setRecieve(string IP){
 		client = new System.Net.Sockets.UdpClient();
@@ -35,7 +39,6 @@ public partial class MPlayer : MeshInstance3D
 		recieve.Connect(IP, hostPort);
 		send.Connect(IP, port);
 	}
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
 	}
@@ -66,7 +69,10 @@ public partial class MPlayer : MeshInstance3D
 	}
 	public void setOrientation(RecievedDataStruct packet){
 		try{
+			setHimboAnimation(packet.anim);
 			Vector3 pos = new Vector3(packet.px.ToFloat(),packet.py.ToFloat(),packet.pz.ToFloat());
+			//Vector3 rot = packet.rotation;
+			extractRotation(packet.rotation);
 			Position = pos;
 			//GD.Print(new Vector3(packet.px.ToFloat(),packet.py.ToFloat(),packet.pz.ToFloat()));
 		}
@@ -74,6 +80,15 @@ public partial class MPlayer : MeshInstance3D
 			GD.PrintErr(e);
 		}
 
+	}
+	private void extractRotation(String strRot){
+		String[] Rots = strRot.Split(',');
+
+		Rotation = new Vector3(0, Rots[1].ToFloat(),0);
+		
+	}
+	private void setHimboAnimation(char animChar){
+		characterModel.swtichAnimation(animChar);
 	}
 	void setDamage(playerHitPacket pkt){
 		//remove hard coding and add code for other players

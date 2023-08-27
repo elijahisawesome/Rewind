@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://iyeds18qvhoc"]
+[gd_scene load_steps=10 format=3 uid="uid://iyeds18qvhoc"]
 
 [ext_resource type="Script" path="res://Player.cs" id="1_g6hfm"]
 [ext_resource type="Script" path="res://Camera3D.cs" id="2_akrxr"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://cosyybq18f384" path="res://UI/ConnectScreenUI.tscn" id="4_xjscy"]
 [ext_resource type="Texture2D" uid="uid://j4w1b1y8ufpe" path="res://2DArt/xHair.png" id="4_y2sxu"]
 [ext_resource type="Script" path="res://LocalPlayer/Gun.cs" id="5_fchk4"]
+[ext_resource type="PackedScene" uid="uid://bvnlpadf1tj74" path="res://3D/Animations/himbo_base.tscn" id="7_pik7b"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_an347"]
 
@@ -20,6 +21,7 @@ shape = SubResource("CapsuleShape3D_an347")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+visible = false
 mesh = SubResource("CapsuleMesh_cmap5")
 
 [node name="Camera3D" type="Camera3D" parent="."]
@@ -51,3 +53,7 @@ stretch_mode = 3
 
 [node name="Gun" type="Node3D" parent="."]
 script = ExtResource("5_fchk4")
+
+[node name="HimboBase" parent="." instance=ExtResource("7_pik7b")]
+transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 1.92599, 0)
+visible = false

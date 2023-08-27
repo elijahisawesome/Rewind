@@ -21,10 +21,7 @@ public class UDPSend{
         udpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
     }
     public bool Connect(string adr, int port){
-        //GD.Print(adr);
         RemoteIpEndPoint =  new IPEndPoint(IPAddress.Parse(adr), port);
-        //udpClient.Connect(adr, port);
-        //Godot.GD.Print(adr);
 
         return true;
     }
@@ -45,6 +42,8 @@ public class UDPSend{
         string deliminator = "/";
         d+=packet.clientNumber;
         d+=deliminator;
+        d+=packet.anim;
+        d+=deliminator;
         d+=packet.px;
         d+=deliminator;
         d+=packet.py;
@@ -52,7 +51,6 @@ public class UDPSend{
         d+=packet.pz;
         d+=deliminator;
         d+=packet.rotation;
-        //Godot.GD.Print(rEP);
         sendBytes = System.Text.Encoding.ASCII.GetBytes(d);
         udpClient.Client.SendTo(sendBytes, rEP);
     }
