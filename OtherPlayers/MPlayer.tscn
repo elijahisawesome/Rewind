@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://cvpcpwe72yayl"]
 
 [ext_resource type="Script" path="res://OtherPlayers/MPlayer.cs" id="1_c6g7m"]
-[ext_resource type="PackedScene" uid="uid://bvnlpadf1tj74" path="res://3D/Animations/himbo_base.tscn" id="2_ms1v6"]
+[ext_resource type="PackedScene" uid="uid://husp42oe65x8" path="res://3D/Animations/himbo_base.tscn" id="2_ms1v6"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_u4twl"]
 

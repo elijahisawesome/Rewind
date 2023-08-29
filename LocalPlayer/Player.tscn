@@ -6,7 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://cosyybq18f384" path="res://UI/ConnectScreenUI.tscn" id="4_xjscy"]
 [ext_resource type="Texture2D" uid="uid://j4w1b1y8ufpe" path="res://2DArt/xHair.png" id="4_y2sxu"]
 [ext_resource type="Script" path="res://LocalPlayer/Gun.cs" id="5_fchk4"]
-[ext_resource type="PackedScene" uid="uid://bvnlpadf1tj74" path="res://3D/Animations/himbo_base.tscn" id="7_pik7b"]
+[ext_resource type="PackedScene" uid="uid://husp42oe65x8" path="res://3D/Animations/himbo_base.tscn" id="7_pik7b"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_an347"]
 
