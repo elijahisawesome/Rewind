@@ -1,5 +1,3 @@
-using Godot;
-using System;
 
 public class StateMachine{
     public readonly FallingState fallingState;

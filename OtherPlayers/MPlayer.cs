@@ -3,7 +3,7 @@ using System;
 using System.Diagnostics;
 
 
-public partial class MPlayer : MeshInstance3D
+public partial class MPlayer : CharacterBody3D
 {
 	public int id;
 	UDPSend send;

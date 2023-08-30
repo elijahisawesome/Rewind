@@ -37,48 +37,6 @@ public partial class Player : CharacterBody3D
     public override void _PhysicsProcess(double delta)
 	{
 
-		
-
-		// Add the gravity.
-		/*
-		
-		Vector3 velocity = Velocity;
-		if (IsOnFloor()){
-			walk(delta);	
-		}
-		else{
-			//applyGravity();
-			Velocity += new Vector3(0,-fallSpeed*(float)delta,0);
-		}
-
-		// Handle Jump.
-		if(Input.IsActionJustPressed("Dash")){
-			dashing = true;
-			return;
-		}
-		if (Input.IsActionJustPressed("ui_accept") && IsOnFloor()){
-			Velocity = new Vector3(Velocity[0], JumpVelocity,Velocity[2]);
-		}
-			
-
-		// Get the input direction and handle the movement/deceleration.
-		// As good practice, you should replace UI actions with custom gameplay actions.
-		
-		Vector2 inputDir = Input.GetVector("left", "right", "up", "down");
-		Vector3 direction = (Transform.Basis * new Vector3(inputDir.X, 0, inputDir.Y)).Normalized();
-		if (direction != Vector3.Zero)
-		{
-			velocity.X = direction.X * Speed;
-			velocity.Z = direction.Z * Speed;
-		}
-		else
-		{
-			velocity.X = Mathf.MoveToward(Velocity.X, 0, Speed);
-			velocity.Z = Mathf.MoveToward(Velocity.Z, 0, Speed);
-		}
-		Velocity = velocity;
-		*/
-
 		stateMachine.process(delta);
 
 		MoveAndSlide();

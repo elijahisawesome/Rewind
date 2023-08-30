@@ -36,9 +36,9 @@ public partial class Gun : Node3D
 
 			try{
 				if(result.Count > 0){
-					var pp = (CharacterBody3D)result["collider"];
-					MPlayer mI = pp.GetParent<MPlayer>();
-					player.enemyHit(mI);
+					var pp = (MPlayer)result["collider"];
+					//MPlayer mI = pp.GetParent<MPlayer>();
+					player.enemyHit(pp);
 					//mI.QueueFree();
 					//Rid ridd = new Rid(result["rid"]);
 					//GD.Print(ListOfMPlayers.checkRids(result["rid"]));
