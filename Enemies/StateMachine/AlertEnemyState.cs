@@ -1,4 +1,4 @@
-using Godot;
+
 
 public class AlertEnemyState : EnemyBaseState
 {   
@@ -9,7 +9,8 @@ public class AlertEnemyState : EnemyBaseState
         stateMachine = e;
         enemy = stateMachine.enemy;
         enemy.SwitchBaseState('A');
-        GD.Print("Alert!");
+        enemy.SetTargetLastPosition();
+        Godot.GD.Print("Alert!");
     }
 
     public override void EnterState(ref PlayerBaseState newState, StateMachine _stateMachine)
@@ -24,8 +25,28 @@ public class AlertEnemyState : EnemyBaseState
 
     public override void MaintainState(double delta)
     {
-        enemy.MoveToTarget(delta);
-        if(Input.IsActionJustPressed("ResetAI")){
+        bool visible = enemy.CheckVision();
+        bool Arrived = enemy.HasArrivedAtLastPosition();
+        if(!Arrived){
+            if(visible){
+                enemy.MoveToTarget(delta);
+                enemy.SetTargetLastPosition();
+            }
+            else{
+                enemy.MoveToLastKnownTargetPosition(delta);
+            }
+        }
+        else{
+            if(visible){
+                enemy.Attack();
+                enemy.SetTargetLastPosition();
+            }
+            else{
+                stateMachine.changeState(stateMachine.searchingState);
+            }
+        }
+       
+        if(Godot.Input.IsActionJustPressed("ResetAI")){
             stateMachine.changeState(stateMachine.idleState);
         }
     }

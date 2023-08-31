@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://c21nraja1ibbx"]
+[gd_scene load_steps=9 format=3 uid="uid://c21nraja1ibbx"]
 
 [ext_resource type="Script" path="res://Enemies/TestEnemy/Test_Enemy.cs" id="1_diofr"]
 
@@ -39,6 +39,8 @@ shadow_mesh = SubResource("ArrayMesh_s3gpq")
 [sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_ynk6w"]
 points = PackedVector3Array(0, 1, 0, 0.70693, -1, -0.707126, 0, -1, -1, -0.707126, -1, -0.707126, -1, -1, 0, -0.707126, -1, 0.70693, 0, -1, 1, 0.70693, -1, 0.70693, 1, -1, 0)
 
+[sub_resource type="BoxMesh" id="BoxMesh_w18xe"]
+
 [node name="Test_Enemy" type="CharacterBody3D"]
 script = ExtResource("1_diofr")
 
@@ -54,7 +56,7 @@ shape = SubResource("CapsuleShape3D_f43xw")
 debug_enabled = true
 
 [node name="Area3D" type="Area3D" parent="."]
-transform = Transform3D(8, 0, 0, 0, -3.49691e-07, 8, 0, -8, -3.49691e-07, 0, 1.56752, 8.50652)
+transform = Transform3D(8, 0, 0, 0, -3.49691e-07, -8, 0, 8, -3.49691e-07, 0.00397396, 1.56751, -8.46196)
 disable_mode = 1
 
 [node name="VisionCone2" type="MeshInstance3D" parent="Area3D"]
@@ -64,3 +66,7 @@ skeleton = NodePath("")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
 shape = SubResource("ConvexPolygonShape3D_ynk6w")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.697078, 0.716996, 0, -0.55361, 0.53823, -0.635472, -0.455631, 0.442973, 0.772124, -1.51411, 1.3314, 0)
+mesh = SubResource("BoxMesh_w18xe")
