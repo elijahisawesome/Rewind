@@ -5,7 +5,7 @@
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_2op3r"]
 
-[node name="CharacterBody3D" type="CharacterBody3D"]
+[node name="MPlayer" type="CharacterBody3D"]
 script = ExtResource("1_c6g7m")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]

@@ -1,18 +1,23 @@
-[gd_scene load_steps=5 format=3 uid="uid://c7ij5xg25421o"]
+[gd_scene load_steps=6 format=3 uid="uid://c7ij5xg25421o"]
 
 [ext_resource type="PackedScene" uid="uid://7svl8rt0udq2" path="res://Environments/Building_1_Import_Navmesh.tscn" id="1_k5ptn"]
 [ext_resource type="PackedScene" uid="uid://iyeds18qvhoc" path="res://LocalPlayer/Player.tscn" id="2_wpk1f"]
 [ext_resource type="PackedScene" uid="uid://khyelnfkst7y" path="res://Networking/MultiplayerManager.tscn" id="3_oon5h"]
 [ext_resource type="PackedScene" uid="uid://c21nraja1ibbx" path="res://Enemies/TestEnemy/Test_Enemy.tscn" id="4_t32gl"]
+[ext_resource type="PackedScene" uid="uid://cvpcpwe72yayl" path="res://OtherPlayers/MPlayer.tscn" id="5_vdlwa"]
 
 [node name="Node" type="Node"]
 
 [node name="NavigationRegion3D" parent="." instance=ExtResource("1_k5ptn")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0243778, -9.53674e-07, 0.000468254)
 
 [node name="Player" parent="." instance=ExtResource("2_wpk1f")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.93047, 1.29604, -1.50499)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.93559, 1.29604, -1.49367)
 
 [node name="MultiplayerManager" parent="." instance=ExtResource("3_oon5h")]
 
 [node name="Test_Enemy" parent="." instance=ExtResource("4_t32gl")]
-transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 12.942, 0, -5.50424)
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -1.51854, 1.61208, -6.54019)
+
+[node name="MPlayer" parent="." instance=ExtResource("5_vdlwa")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.36884, 2.08101, -5.29168)

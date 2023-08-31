@@ -24,6 +24,9 @@ public class AlertEnemyState : EnemyBaseState
 
     public override void MaintainState(double delta)
     {
-        
+        enemy.MoveToTarget(delta);
+        if(Input.IsActionJustPressed("ResetAI")){
+            stateMachine.changeState(stateMachine.idleState);
+        }
     }
 }

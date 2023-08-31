@@ -9,13 +9,14 @@ public partial class Player : CharacterBody3D
 	public const float walkSpeed = 7.0f;
 	public const float JumpVelocity = 3.5f;
 
-	public const float maxSpeed = 15f;
-	public const float moveSpeed = 5f;
+	public const float maxSpeed = 30f;
+	public const float moveSpeed = 10f;
 	public const float walkAccel = 10f;
 	public const float fallSpeed = 10f;
 
 	public const float stopSpeed = 1f;
 	public const float frictionFactor= 3.5f;
+	public Vector3 rayPos;
 	Vector3 wishVel;
 
 	Char animChar = 'I';
@@ -23,23 +24,34 @@ public partial class Player : CharacterBody3D
 	public int id;
 	MultiplayerManager mpm;
 	StateMachine stateMachine;
+
 	bool dashing;
 	himbo_base characterModel;
+	CollisionShape3D col;
 	// Get the gravity from the project settings to be synced with RigidBody nodes.
 	public float gravity = ProjectSettings.GetSetting("physics/3d/default_gravity").AsSingle();
     public override void _Ready()
     {
 		mpm = GetParent<Node>().GetChild<MultiplayerManager>(2);
 		characterModel = GetChild<himbo_base>(5);
+		col = GetChild<CollisionShape3D>(0);
         playerRid = GetRid();
 		stateMachine = new StateMachine(this);
+		rayPos = Position;
+		//noClip();
+		
     }
+	public void noClip(){
+		col.Disabled= true;
+	}
     public override void _PhysicsProcess(double delta)
 	{
-
+		
+		rayPos = Position;
 		stateMachine.process(delta);
-
+		
 		MoveAndSlide();
+		
 	}
 	public void takeDamage(playerHitPacket pkt){
 		//display some kinda damage indicator
@@ -47,6 +59,7 @@ public partial class Player : CharacterBody3D
 		GD.Print(pkt.damage);
 		Velocity = (Transform.Basis * new Vector3(500,0,500));
 		MoveAndSlide();
+		
 		//alter health
 
 		//etc

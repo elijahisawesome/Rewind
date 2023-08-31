@@ -6,7 +6,7 @@ public abstract partial class BaseEnemy:CharacterBody3D{
 
     public abstract bool CheckVision();
 
-    public abstract void MoveToTarget();
+    public abstract void MoveToTarget(double delta);
 
     public void SwitchBaseState(char s){
         baseState = s;

@@ -20,10 +20,9 @@ public partial class MPlayer : CharacterBody3D
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
-		Position = new Vector3(3,15,3);
-		playerID = GetChild<CharacterBody3D>(1).GetRid();
-		localPlayer = GetNode<Player>("../../Player");
-		characterModel = GetChild<himbo_base>(2);
+		playerID = GetRid();
+		localPlayer = GetNode<Player>("../Player");
+		characterModel = GetChild<MeshInstance3D>(1).GetChild<himbo_base>(0);
 	}
 	public void setRecieve(string IP){
 		client = new System.Net.Sockets.UdpClient();
