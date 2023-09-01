@@ -67,6 +67,9 @@ skeleton = NodePath("")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
 shape = SubResource("ConvexPolygonShape3D_ynk6w")
 
+[node name="Timer" type="Timer" parent="."]
+wait_time = 4.0
+
 [node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
 transform = Transform3D(0.697078, 0.716996, 0, -0.55361, 0.53823, -0.635472, -0.455631, 0.442973, 0.772124, -1.51411, 1.3314, 0)
 mesh = SubResource("BoxMesh_w18xe")

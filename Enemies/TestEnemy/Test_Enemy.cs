@@ -20,6 +20,7 @@ public partial class Test_Enemy : BaseEnemy
 	EnemyStateMachine stateMachine;
 	CharacterBody3D target;
 	RayCast3D rayCast;
+	Timer timer;
 	Godot.Collections.Array<Rid> excludes;
 	// Get the gravity from the project settings to be synced with RigidBody nodes.
 	public float gravity = ProjectSettings.GetSetting("physics/3d/default_gravity").AsSingle();
@@ -29,7 +30,9 @@ public partial class Test_Enemy : BaseEnemy
 		nav = GetChild<NavigationAgent3D>(2);
 		player = GetParent<Node>().GetChild<Player>(1);
 		area = GetChild<Area3D>(3);
+		timer = GetChild<Timer>(4);
 		stateMachine = new EnemyStateMachine(this);
+
 		
 		excludes = new Godot.Collections.Array<Rid>
                     {
@@ -146,17 +149,43 @@ public partial class Test_Enemy : BaseEnemy
         GD.Print("attack");
     }
 
+	public override void LookAround(double delta){
+		Vector3 newRot = new Vector3(0,0,0);
+		newRot.Y = (float)Math.Sin(((timer.TimeLeft/3))*delta);
+		Rotation += newRot;
+
+
+	}
+	public override bool SearchTimerComplete(){
+		if(timer.TimeLeft < 0.1f){
+			timer.Stop();
+			return true;
+		}
+		return false;
+	}
+
+	public override bool DoneSearching(){
+
+		return roamCounter >=3;
+	}
+	public override void StartTimer(){
+		timer.Start();
+	}
+
     public override void Roam()
     {
         GD.Print("lookin around, bud");
     }
-	public void iterateRoamCounter(){
-
+	public override void IterateRoamCounter(){
+		roamCounter++;
+	}
+	public override void ResetRoamCounter(){
+		roamCounter = 1;
 	}
 	public override void MoveToRoamTarget(double delta){
 		MoveToLastKnownTargetPosition(delta);
 	}
-	public override void SetRoamTarget(){
+	public override bool SetRoamTarget(){
 		Random rnd = new Random();
 		var state = GetWorld3D().DirectSpaceState;
 		float factorX = (rnd.NextSingle() - .5f)*roamRadius;
@@ -168,14 +197,11 @@ public partial class Test_Enemy : BaseEnemy
 		shot.Exclude = excludes;
 					
 		var result = state.IntersectRay(shot);
-		GD.Print("e");
-		GD.Print(testTargetLastPosition);
-		GD.Print(area.GlobalPosition);
-		GD.Print("e");
 		if(result.Count > 0){
-			return;
+			return false;
 		}
 		targetLastPosition = testTargetLastPosition;
+		return true;
 	}
 
     public override void EvaluateTargets()

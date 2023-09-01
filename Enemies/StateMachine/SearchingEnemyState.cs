@@ -6,6 +6,7 @@ public class SearchingEnemyState : EnemyBaseState
     {
         stateMachine = e;
         enemy = stateMachine.enemy;
+        enemy.ResetRoamCounter();
         enemy.SwitchBaseState('S');
         Godot.GD.Print("searching...");
     }
@@ -28,7 +29,23 @@ public class SearchingEnemyState : EnemyBaseState
             stateMachine.changeState(stateMachine.alertState);
         }
         else if (enemy.HasArrivedAtLastPosition()){
-            enemy.SetRoamTarget();
+            if(enemy.SearchTimerComplete()){
+                if(enemy.DoneSearching()){
+                    stateMachine.changeState(stateMachine.idleState);
+                    return;
+                }
+                else{
+                    if (enemy.SetRoamTarget()){
+                        enemy.IterateRoamCounter();
+                        enemy.StartTimer();
+                    }
+                }
+                
+            }
+            else{
+                enemy.LookAround(delta);
+            }
+            
         }
         else{
             enemy.MoveToRoamTarget(delta);

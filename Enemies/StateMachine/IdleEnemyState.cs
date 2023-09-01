@@ -7,6 +7,7 @@ public class IdleEnemyState : EnemyBaseState
         eStateMachine = e;
         enemy = eStateMachine.enemy;
         enemy.SwitchBaseState('I');
+        Godot.GD.Print("Idle");
     }
 
     public override void EnterState(ref PlayerBaseState newState, StateMachine _stateMachine)

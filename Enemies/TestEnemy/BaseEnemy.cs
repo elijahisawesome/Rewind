@@ -21,16 +21,26 @@ public abstract partial class BaseEnemy:CharacterBody3D{
 
     public abstract void MoveToLastKnownTargetPosition(double delta);
 
+    public abstract void IterateRoamCounter();
+
+    public abstract bool SearchTimerComplete();
+    public abstract void ResetRoamCounter();
+    public abstract bool DoneSearching();
+
+    public abstract void LookAround(double delta);
+
     public abstract void Attack();
 
     public abstract void Roam();
 
     public abstract void MoveToRoamTarget(double delta);
 
-    public abstract void SetRoamTarget();
+    public abstract bool SetRoamTarget();
 
     public abstract void EvaluateTargets();
 
     public abstract bool EvaluateAttack();
+
+    public abstract void StartTimer();
 
 }
