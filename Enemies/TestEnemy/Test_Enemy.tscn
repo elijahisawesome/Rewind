@@ -1,8 +1,7 @@
-[gd_scene load_steps=9 format=3 uid="uid://c21nraja1ibbx"]
+[gd_scene load_steps=10 format=3 uid="uid://c21nraja1ibbx"]
 
 [ext_resource type="Script" path="res://Enemies/TestEnemy/Test_Enemy.cs" id="1_diofr"]
-
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_eolyh"]
+[ext_resource type="PackedScene" uid="uid://b6uvk14v8wdre" path="res://Enemies/TestEnemy/EnemyBase.glb" id="2_38wna"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_f43xw"]
 
@@ -39,14 +38,15 @@ shadow_mesh = SubResource("ArrayMesh_s3gpq")
 [sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_ynk6w"]
 points = PackedVector3Array(0, 1, 0, 0.70693, -1, -0.707126, 0, -1, -1, -0.707126, -1, -0.707126, -1, -1, 0, -0.707126, -1, 0.70693, 0, -1, 1, 0.70693, -1, 0.70693, 1, -1, 0)
 
-[sub_resource type="BoxMesh" id="BoxMesh_w18xe"]
+[sub_resource type="SphereShape3D" id="SphereShape3D_1u54d"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_uk1oa"]
 
 [node name="Test_Enemy" type="CharacterBody3D"]
 script = ExtResource("1_diofr")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
-mesh = SubResource("CapsuleMesh_eolyh")
+[node name="EnemyBase" parent="." instance=ExtResource("2_38wna")]
+transform = Transform3D(0.13, 0, 0, 0, 0.13, 0, 0, 0, 0.13, 0, 1.83853, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
@@ -67,9 +67,17 @@ skeleton = NodePath("")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
 shape = SubResource("ConvexPolygonShape3D_ynk6w")
 
+[node name="EnemyProximitySensor" type="Area3D" parent="."]
+disable_mode = 1
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="EnemyProximitySensor"]
+transform = Transform3D(8, 0, 0, 0, 8, 0, 0, 0, 8, 0, 1.425, 0)
+shape = SubResource("SphereShape3D_1u54d")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="EnemyProximitySensor"]
+transform = Transform3D(8, 0, 0, 0, 8, 0, 0, 0, 8, 0, 1.425, 0)
+visible = false
+mesh = SubResource("SphereMesh_uk1oa")
+
 [node name="Timer" type="Timer" parent="."]
 wait_time = 4.0
-
-[node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.697078, 0.716996, 0, -0.55361, 0.53823, -0.635472, -0.455631, 0.442973, 0.772124, -1.51411, 1.3314, 0)
-mesh = SubResource("BoxMesh_w18xe")

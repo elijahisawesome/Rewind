@@ -7,17 +7,20 @@ public partial class Test_Enemy : BaseEnemy
 {
 	public const float Speed = 5.0f;
 	public const float accel = 1.5f;
-
 	public const float attackDistance = 2f;
 
 	public int roamCounter = 1;
+	public int maxRoamCounter = 4;
 	public float roamRadius = 5;
 	public Vector3 targetLastPosition;
 
 	public NavigationAgent3D nav;
 	public Player player;
-	Area3D area;
+	Area3D visionCone;
+
+	Area3D proximitySensor;
 	EnemyStateMachine stateMachine;
+	MultiplayerManager mpm;
 	CharacterBody3D target;
 	RayCast3D rayCast;
 	Timer timer;
@@ -29,8 +32,12 @@ public partial class Test_Enemy : BaseEnemy
 		await ToSignal(GetTree(), "process_frame");
 		nav = GetChild<NavigationAgent3D>(2);
 		player = GetParent<Node>().GetChild<Player>(1);
-		area = GetChild<Area3D>(3);
-		timer = GetChild<Timer>(4);
+		visionCone = GetChild<Area3D>(3);
+		proximitySensor = GetChild<Area3D>(4);
+		timer = GetChild<Timer>(5);
+		mpm = GetNode<MultiplayerManager>("%MultiplayerManager");
+		
+		
 		stateMachine = new EnemyStateMachine(this);
 
 		
@@ -43,8 +50,10 @@ public partial class Test_Enemy : BaseEnemy
 	}
 	public override void _PhysicsProcess(double delta)
 	{
+		if(mpm.hosting){
+			stateMachine.process(delta);
+		}
 		
-		stateMachine.process(delta);
 
 	}
 
@@ -52,7 +61,8 @@ public partial class Test_Enemy : BaseEnemy
     {
 	var spaceState = GetWorld3D().DirectSpaceState;
 		try{
-			var bodies = area.GetOverlappingBodies();
+			var bodies = visionCone.GetOverlappingBodies();
+			var closeBodies = proximitySensor.GetOverlappingBodies();
 			foreach(var body in bodies){
 				Godot.Vector3 rayTargetPos = new Godot.Vector3();
 				if(body.GetType().ToString() == "Player" || body.GetType().ToString() == "MPlayer"){
@@ -82,6 +92,37 @@ public partial class Test_Enemy : BaseEnemy
 						}
 					}
 					
+				}
+			}
+		foreach(var body in closeBodies){
+			Godot.Vector3 rayTargetPos = new Godot.Vector3();
+				if(body.GetType().ToString() == "Player" || body.GetType().ToString() == "MPlayer"){
+					target = (CharacterBody3D)body;
+
+					var end = target.Position;
+					if(body.GetType().ToString() == "Player"){
+						end = player.rayPos;
+					}
+
+					var origin = GlobalPosition;
+					
+					var shot = PhysicsRayQueryParameters3D.Create(origin, end);
+					shot.CollideWithAreas = false;
+					
+					
+					shot.Exclude = excludes;
+					
+					var result = spaceState.IntersectRay(shot);
+					
+					if(result.Count > 0){
+						//var collider = rayCast.GetCollider();
+						//GD.Print(result["collider"]);
+						string res = ((CharacterBody3D)result["collider"]).GetType().ToString();
+						if(res == "Player" || res == "MPlayer"){
+							return true;
+						}
+					}
+
 				}
 			}
 		}
@@ -146,7 +187,7 @@ public partial class Test_Enemy : BaseEnemy
 
     public override void Attack()
     {
-        GD.Print("attack");
+        (target as Player).takeDamage();
     }
 
 	public override void LookAround(double delta){
@@ -166,7 +207,7 @@ public partial class Test_Enemy : BaseEnemy
 
 	public override bool DoneSearching(){
 
-		return roamCounter >=3;
+		return roamCounter >=maxRoamCounter;
 	}
 	public override void StartTimer(){
 		timer.Start();

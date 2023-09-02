@@ -64,6 +64,10 @@ public partial class Player : CharacterBody3D
 
 		//etc
 	}
+	public void takeDamage(){
+		Velocity = (Transform.Basis * new Vector3(500,0,500));
+		MoveAndSlide();
+	}
 	public void enemyHit(MPlayer target){
 		GD.Print(target.port);
 		GD.Print(target.hostPort);
