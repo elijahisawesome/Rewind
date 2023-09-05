@@ -67,6 +67,7 @@ public partial class Test_Enemy : BaseEnemy
 				Godot.Vector3 rayTargetPos = new Godot.Vector3();
 				if(body.GetType().ToString() == "Player" || body.GetType().ToString() == "MPlayer"){
 					target = (CharacterBody3D)body;
+					
 
 					var end = target.Position;
 					if(body.GetType().ToString() == "Player"){
@@ -84,10 +85,16 @@ public partial class Test_Enemy : BaseEnemy
 					var result = spaceState.IntersectRay(shot);
 					
 					if(result.Count > 0){
+						
 						//var collider = rayCast.GetCollider();
 						//GD.Print(result["collider"]);
+						
+						
+
 						string res = ((CharacterBody3D)result["collider"]).GetType().ToString();
+						
 						if(res == "Player" || res == "MPlayer"){
+							
 							return true;
 						}
 					}
@@ -100,7 +107,7 @@ public partial class Test_Enemy : BaseEnemy
 					target = (CharacterBody3D)body;
 
 					var end = target.Position;
-					if(body.GetType().ToString() == "Player"){
+					if(body.GetType().ToString() == "Player" || body.GetType().ToString() == "Player"){
 						end = player.rayPos;
 					}
 
@@ -187,7 +194,14 @@ public partial class Test_Enemy : BaseEnemy
 
     public override void Attack()
     {
-        (target as Player).takeDamage();
+		if(target is Player){
+			(target as Player).takeDamage();
+		}
+		else if(target is MPlayer && !(target as MPlayer).dead){
+			(target as MPlayer).die();
+		}
+		GD.Print("Hey!");
+        
     }
 
 	public override void LookAround(double delta){
