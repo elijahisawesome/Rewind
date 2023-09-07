@@ -52,6 +52,7 @@ public partial class Test_Enemy : BaseEnemy
 	{
 		if(mpm.hosting){
 			stateMachine.process(delta);
+			mpm.hostTransmitEnemyState((int)GetMeta("ID"));
 		}
 		
 
@@ -86,11 +87,6 @@ public partial class Test_Enemy : BaseEnemy
 					
 					if(result.Count > 0){
 						
-						//var collider = rayCast.GetCollider();
-						//GD.Print(result["collider"]);
-						
-						
-
 						string res = ((CharacterBody3D)result["collider"]).GetType().ToString();
 						
 						if(res == "Player" || res == "MPlayer"){
@@ -195,10 +191,11 @@ public partial class Test_Enemy : BaseEnemy
     public override void Attack()
     {
 		if(target is Player){
-			(target as Player).takeDamage();
+			(target as Player).die(Rotation);
 		}
 		else if(target is MPlayer && !(target as MPlayer).dead){
-			(target as MPlayer).die();
+			(target as MPlayer).broadcastDeath(Rotation);
+			(target as MPlayer).die(Rotation);
 		}
 		GD.Print("Hey!");
         

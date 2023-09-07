@@ -16,6 +16,7 @@ public partial class Player : CharacterBody3D
 
 	public const float stopSpeed = 1f;
 	public const float frictionFactor= 3.5f;
+	public Vector3 startingPosition;
 	public Vector3 rayPos;
 	Vector3 wishVel;
 
@@ -26,6 +27,7 @@ public partial class Player : CharacterBody3D
 	StateMachine stateMachine;
 
 	bool dashing;
+	bool dead = false;
 	himbo_base characterModel;
 	CollisionShape3D col;
 	// Get the gravity from the project settings to be synced with RigidBody nodes.
@@ -38,21 +40,27 @@ public partial class Player : CharacterBody3D
         playerRid = GetRid();
 		stateMachine = new StateMachine(this);
 		rayPos = Position;
-		//noClip();
+		startingPosition = Position;
 		
     }
 	public void noClip(){
-		col.Disabled= true;
+		
 	}
+	
     public override void _PhysicsProcess(double delta)
 	{
+		if(!dead){
+			rayPos = Position;
+			stateMachine.process(delta);
+		}
+		else{
+			stateMachine.process(delta);
+		}
 		
-		rayPos = Position;
-		stateMachine.process(delta);
 		
 		MoveAndSlide();
-		
 	}
+
 	public void takeDamage(playerHitPacket pkt){
 		//display some kinda damage indicator
 		GD.Print("Shot thru the heart, and youre to blame. Uopi give loooove a bad name, da nua na an aa na na na na");
@@ -67,6 +75,48 @@ public partial class Player : CharacterBody3D
 	public void takeDamage(){
 		Velocity = (Transform.Basis * new Vector3(500,0,500));
 		MoveAndSlide();
+	}
+	public void respawn(){
+		dead = false;
+		col.Disabled = false;
+		stateMachine.ChangeState(stateMachine.fallingState);
+		Position = startingPosition;
+	}
+	public void die(Vector3 rotation){
+		mpm.broadcastDeath(id, rotation);
+		dead = true;
+		col.Disabled = true;
+		Node parent = GetParent();
+		stateMachine.ChangeState(stateMachine.deathState);
+
+		string armPath = "res://3D/GoreParts/himbo_base_gore_arm.tscn";
+		string legPath = "res://3D/GoreParts/himbo_base_gore_legs.tscn";
+		string headPath = "res://3D/GoreParts/himbo_base_gore_head.tscn";
+		string torsoPath = "res://3D/GoreParts/himbo_base_gore_torso.tscn";
+		PackedScene armPackedScene = GD.Load<PackedScene>(armPath);
+		PackedScene legPackedScene = GD.Load<PackedScene>(legPath);
+		PackedScene headPackedScene = GD.Load<PackedScene>(headPath);
+		PackedScene torsoPackedScene = GD.Load<PackedScene>(torsoPath);
+		var arm = armPackedScene.Instantiate<himbo_base_gore_arm>();
+		var leg = legPackedScene.Instantiate<himbo_base_gore_legs>();
+		var head = headPackedScene.Instantiate<himbo_base_gore_head>();
+		var torso = torsoPackedScene.Instantiate<himbo_base_gore_torso>();
+		arm.Position = Position;
+		leg.Position = Position;
+		torso.Position = Position;
+		head.Position = Position;
+		var knockBack = 15f;
+		rotation = rotation*knockBack;
+		arm.ApplyCentralImpulse(rotation);
+		head.ApplyCentralImpulse(rotation);
+		leg.ApplyCentralImpulse(rotation);
+		torso.ApplyCentralImpulse(rotation);
+		parent.CallDeferred("add_child",(arm));
+		parent.CallDeferred("add_child",(leg));
+		parent.CallDeferred("add_child",(torso));
+		parent.CallDeferred("add_child",(head));
+
+		
 	}
 	public void enemyHit(MPlayer target){
 		GD.Print(target.port);
@@ -126,8 +176,44 @@ public partial class Player : CharacterBody3D
 
 		Accelerate(wishDir, wishSpeed, walkAccel, delta);
 	}
-	public void slide(){
+	public void NoclipMove(double delta){
+		Vector3 forward = Vector3.Forward;
+		Vector3 side = Vector3.Left;
 
+		Vector2 inputDir = Input.GetVector("left", "right", "up", "down");
+
+
+		forward = forward.Rotated(Vector3.Up,Rotation.Y);
+		side = side.Rotated(Vector3.Up,Rotation.Y);
+
+		forward = forward.Normalized();
+		side = side.Normalized();
+
+		float forwardMove = -inputDir[1]*moveSpeed;
+		float sideMove = -inputDir[0]*moveSpeed;
+		
+
+		wishVel = side*sideMove + forward*forwardMove;
+
+
+		var wishSpeed = wishVel.Length();
+		var wishDir = wishVel.Normalized();
+
+		if(wishSpeed != 0.0 && wishSpeed > maxSpeed){
+			wishVel *= maxSpeed/wishSpeed;
+			wishSpeed = maxSpeed;
+		} 
+		applyFriction(delta);
+		Accelerate(wishDir, wishSpeed, walkAccel, delta);
+		deathUpAndDown();
+	}
+	public void deathUpAndDown(){
+		if(Input.IsActionJustPressed("Jump")){
+			Position = new Vector3(Position.X,Position.Y +1,Position.Z);
+		}
+		else if(Input.IsActionJustPressed("Crouch")){
+			Position = new Vector3(Position.X,Position.Y -1,Position.Z);
+		}
 	}
 	public bool isStandingStill(){
 		return Velocity.Length() <=0;

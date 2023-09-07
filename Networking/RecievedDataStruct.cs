@@ -17,7 +17,7 @@ public struct playerHitPacket{
     public int recieverID;
     public int attackerID;
     public int damage;
-    
+    public string rotation;
 }
 public struct joinPacket{
     public int playerID;
@@ -28,4 +28,10 @@ public struct joinPacket{
 
 public struct rewindingPacket{
     public bool currentlyRewinding;
+}
+public struct playerLifePacket{
+    public int playerID;
+
+    public int Dying;
+    
 }

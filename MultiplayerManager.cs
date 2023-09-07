@@ -38,6 +38,9 @@ public partial class MultiplayerManager : Node
 		await connection.Connect(adr);
 		spawnHost();
 	}
+	public void hostTransmitEnemyState(int id){
+
+	}
 	private void spawnHost(){
 		
 		string path = "res://OtherPlayers/MPlayer.tscn";
@@ -84,6 +87,9 @@ public partial class MultiplayerManager : Node
 				packet.clientNumber = clientNumber;
 				player.broadcastPosition(ref packet);
 				player.determineAnimationAndBroadcast(ref packet);
+
+				connection.clientAcceptGenericTCPSignal();
+				
 				
 				clientSend.sendData(packet,clientSend.RemoteIpEndPoint);
 			
@@ -191,6 +197,9 @@ public partial class MultiplayerManager : Node
 		for(int x = 0; x<playerCount; x++){
 			
 		}
+	}
+	public void broadcastDeath(int id, Vector3 rotation){
+		connection.serverSendClientDeath(id, rotation);
 	}
 	public void playerHit(int hitPlayersID, int attackersID){
 		if(hosting){

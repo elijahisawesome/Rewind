@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Diagnostics;
+//using System.Numerics;
 
 
 public partial class MPlayer : CharacterBody3D
@@ -12,6 +13,7 @@ public partial class MPlayer : CharacterBody3D
 	Player localPlayer;
 	himbo_base characterModel;
 	CollisionShape3D collider;
+	MultiplayerManager mpm;
 	public int port;
 	public int hostPort;
 	public Vector3 Pos;
@@ -26,11 +28,11 @@ public partial class MPlayer : CharacterBody3D
 	{
 		dead = false;
 		playerID = GetRid();
-		localPlayer = GetNode<Player>("../Player");
+		localPlayer = GetNode<Player>("../../Player");
 		collider = GetChild<CollisionShape3D>(0);
 		parent = GetParent();
 		characterModel = GetChild<MeshInstance3D>(1).GetChild<himbo_base>(0);
-		
+		mpm = GetParent<MultiplayerManager>();
 	}
 	public override void _PhysicsProcess(double dleta){
 		MoveAndSlide();
@@ -58,6 +60,9 @@ public partial class MPlayer : CharacterBody3D
 	}
 	public void transmitDamageToPlayers(playerHitPacket packet){
 		send.sendData(packet, send.RemoteIpEndPoint);
+	}
+	public void transmitDeathToPlayers(){
+
 	}
 	public char getPacketType(){
 		return packetType;
@@ -106,16 +111,20 @@ public partial class MPlayer : CharacterBody3D
 			localPlayer.takeDamage(pkt);
 		}
 	}
-	public void die(){
+	public void die(Godot.Vector3 rotation){
 		//this.Visible = false;
 
 		//TODO: change this, make several bodies spawn attached to the root node, fire em off and then remove them after a timer. Remove the player's collision as well.
+		
 		dead = true;
 		collider.Disabled = true;
 		this.Visible = false;
-		spawnGore();
+		spawnGore(rotation);
 	}
-	private void spawnGore(){
+	public void broadcastDeath(Godot.Vector3 rotation){
+		mpm.broadcastDeath(id,rotation);
+	}
+	private void spawnGore(Godot.Vector3 rotation){
 		string armPath = "res://3D/GoreParts/himbo_base_gore_arm.tscn";
 		string legPath = "res://3D/GoreParts/himbo_base_gore_legs.tscn";
 		string headPath = "res://3D/GoreParts/himbo_base_gore_head.tscn";
@@ -132,10 +141,12 @@ public partial class MPlayer : CharacterBody3D
 		leg.Position = Position;
 		torso.Position = Position;
 		head.Position = Position;
-		arm.ApplyCentralImpulse(new Vector3(1,10,1));
-		head.ApplyCentralImpulse(new Vector3(10,40,1));
-		leg.ApplyCentralImpulse(new Vector3(10,40,1));
-		torso.ApplyCentralImpulse(new Vector3(1,10,1));
+		var knockBack = 15f;
+		rotation = rotation*knockBack;
+		arm.ApplyCentralImpulse(rotation);
+		head.ApplyCentralImpulse(rotation);
+		leg.ApplyCentralImpulse(rotation);
+		torso.ApplyCentralImpulse(rotation);
 		parent.CallDeferred("add_child",(arm));
 		parent.CallDeferred("add_child",(leg));
 		parent.CallDeferred("add_child",(torso));

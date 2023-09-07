@@ -17,11 +17,13 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.93559, 6.6759, -18.5061)
 [node name="MultiplayerManager" parent="." instance=ExtResource("3_oon5h")]
 unique_name_in_owner = true
 
+[node name="MPlayer" parent="MultiplayerManager" instance=ExtResource("5_vdlwa")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.11066, 1.98263, -5.63866)
+
 [node name="Test_Enemy2" parent="." instance=ExtResource("4_t32gl")]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, -11.263, 1.61208, 5.75773)
+metadata/ID = 6
 
 [node name="Test_Enemy" parent="." instance=ExtResource("4_t32gl")]
 transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 10.315, 1.61208, -6.80074)
-
-[node name="MPlayer" parent="." instance=ExtResource("5_vdlwa")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.24613, 1.98263, -5.63866)
+metadata/ID = 7

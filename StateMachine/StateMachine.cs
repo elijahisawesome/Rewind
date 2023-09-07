@@ -5,6 +5,7 @@ public class StateMachine{
 
     public readonly JumpingState jumpingState;
     public readonly WalkingState walkingState;
+    public readonly DeathState deathState;
 
     public PlayerBaseState currentState;
     public PlayerBaseState previousState;
@@ -15,6 +16,7 @@ public class StateMachine{
         idleState = new IdleState();
         jumpingState = new JumpingState();
         walkingState = new WalkingState();
+        deathState = new DeathState();
 
         currentState = idleState;
         idleState.EnterState(ref currentState, this);
