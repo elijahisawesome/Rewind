@@ -9,7 +9,7 @@ public class UDPSend{
     public IPEndPoint RemoteIpEndPoint;
 
     int x = 0;
-    string testString = "Is?";
+    string sendString = "";
     byte[] sendBytesTest = System.Text.Encoding.ASCII.GetBytes("Is anybody there?");
     byte [] sendBytes;
 
@@ -32,11 +32,7 @@ public class UDPSend{
         sendBytes = System.Text.Encoding.ASCII.GetBytes("Connect, Hello!");
         udpClient.Send(sendBytes);
     }
-    public void iterate(){
-        x++;
-        string newTestString = x+testString;
-        sendBytesTest = System.Text.Encoding.ASCII.GetBytes(newTestString);
-    }
+    
     public void sendData(RecievedDataStruct packet, IPEndPoint rEP){
         string d ="m";
         string deliminator = "/";
@@ -51,8 +47,7 @@ public class UDPSend{
         d+=packet.pz;
         d+=deliminator;
         d+=packet.rotation;
-        sendBytes = System.Text.Encoding.ASCII.GetBytes(d);
-        udpClient.Client.SendTo(sendBytes, rEP);
+        concatinatePackets(d,rEP);
     }
     public void sendData(playerHitPacket packet, IPEndPoint rEP){
         string d ="d";
@@ -64,7 +59,32 @@ public class UDPSend{
         d+=deliminator;
         d+=packet.damage;
 
-        sendBytes = System.Text.Encoding.ASCII.GetBytes(d);
+        concatinatePackets(d,rEP);
+    }
+    public void sendData(enemyMovePacket packet, IPEndPoint rEP){
+        string d ="e";
+        string deliminator = "/";
+        d+=packet.enemyNumber;
+        d+=deliminator;
+        d+=packet.px;
+        d+=deliminator;
+        d+=packet.py;
+        d+=deliminator;
+        d+=packet.pz;
+        d+=deliminator;
+        d+=packet.rotation;
+        concatinatePackets(d, rEP);
+    }
+    	private void concatinatePackets(string str, IPEndPoint rEP){
+        sendString+=str;
+        sendString+="+";
+
+		
+	}
+    public void flushUDPPacket(){
+        sendString = sendString.Remove(sendString.Length-1);
+        sendBytes = System.Text.Encoding.ASCII.GetBytes(sendString);
         udpClient.Client.SendTo(sendBytes, RemoteIpEndPoint);
+        sendString = "";
     }
 }

@@ -58,12 +58,19 @@ public partial class MPlayer : CharacterBody3D
 	public void hostTransmitPositionToPlayers(RecievedDataStruct str){
 		send.sendData(str, send.RemoteIpEndPoint);
 	}
+	public void hostTransmitPositionToPlayers(enemyMovePacket str){
+		send.sendData(str, send.RemoteIpEndPoint);
+	}
 	public void transmitDamageToPlayers(playerHitPacket packet){
 		send.sendData(packet, send.RemoteIpEndPoint);
 	}
 	public void transmitDeathToPlayers(){
 
 	}
+	public void flushUDPPacket(){
+		send.flushUDPPacket();
+	}
+
 	public char getPacketType(){
 		return packetType;
 	}
@@ -96,6 +103,10 @@ public partial class MPlayer : CharacterBody3D
 		}
 
 	}
+
+	public string[] getPresplitPacket(){
+		return recieve.getPresplitPacket();
+	}
 	private void extractRotation(String strRot){
 		String[] Rots = strRot.Split(',');
 
@@ -110,6 +121,12 @@ public partial class MPlayer : CharacterBody3D
 		if(pkt.recieverID == 5){
 			localPlayer.takeDamage(pkt);
 		}
+	}
+	public void respawn(Vector3 location){
+		dead = false;
+		collider.Disabled = false;
+		this.Visible = true;
+		Position = location;
 	}
 	public void die(Godot.Vector3 rotation){
 		//this.Visible = false;

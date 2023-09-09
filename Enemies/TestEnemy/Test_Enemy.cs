@@ -36,6 +36,8 @@ public partial class Test_Enemy : BaseEnemy
 		proximitySensor = GetChild<Area3D>(4);
 		timer = GetChild<Timer>(5);
 		mpm = GetNode<MultiplayerManager>("%MultiplayerManager");
+		id = (int)GetMeta("ID");
+		mpm.addEnemyToTrackedMultiplayerEnemies(this,id);
 		
 		
 		stateMachine = new EnemyStateMachine(this);

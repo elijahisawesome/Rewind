@@ -13,7 +13,7 @@ public class TCPConnection{
     TcpListener listener;
     MultiplayerManager mpm;
     byte[] recieved;
-    int defaultPort = 11001;
+    int defaultPort = 11002;
 
     bool isServer = false;
 
@@ -29,8 +29,7 @@ public class TCPConnection{
         }
         else{
             client = new TcpClient();
-            client.BeginConnect(address,11002,new System.AsyncCallback(acceptSocketCallbackCli),client);
-
+            client.BeginConnect(address,11001,new System.AsyncCallback(acceptSocketCallbackCli),client);
         }
     }
 
@@ -80,46 +79,126 @@ public class TCPConnection{
         stm.Write(ba,0,ba.Length);
         stm.Flush();
     }
-    public async void serverSendClientRespawn(){
+    
+    public void clientSendRespawn(Vector3 location, int id){
+        string deliminator = "/";
+        string strr = "L";
+        strr+=deliminator;
+        strr+= id;
+        strr+=deliminator;
+        strr+=location.X;
+        strr+=deliminator;
+        strr+=location.Y;
+        strr+=deliminator;
+        strr+=location.Z;
+        strr+=deliminator;
+        System.Text.ASCIIEncoding asen= new System.Text.ASCIIEncoding();
+        byte[] ba=asen.GetBytes(strr);
+        NetworkStream stm = client.GetStream();
+        stm.Write(ba,0,ba.Length);
+        stm.Flush();
+    }
+    public async void serverSendClientRespawn(playerLifePacket pkt){
+        string deliminator = "/";
+        string strr = "L";
+        strr+=deliminator;
+        strr+= pkt.playerID;
+        strr+=deliminator;
+        strr+=pkt.px;
+        strr+=deliminator;
+        strr+=pkt.py;
+        strr+=deliminator;
+        strr+=pkt.pz;
+        strr+=deliminator;
+
+        System.Text.ASCIIEncoding asen= new System.Text.ASCIIEncoding();
+        byte[] ba=asen.GetBytes(strr);
+        NetworkStream stm = clientFromListener.GetStream();
+        stm.Write(ba,0,ba.Length);
+        stm.Flush();
+    }
+    public void processGenericTCPSignal(string info){
+        GD.Print(info);
+        playerLifePacket pkt = new playerLifePacket();
+        string[] words = info.Split('/');
+        if(words[0] == "D"){
+            GD.Print(words[0]);
+            GD.Print(words[1]);
+            GD.Print(words[2]);
+            GD.Print(words[3]);
+            GD.Print(words[4]);
+            pkt.Dying = 1;
+            pkt.playerID = words[1].ToInt();
+            pkt.px = words[2];
+            pkt.py = words[3];
+            pkt.pz = words[4];
+            mpm.playerDied(pkt);
+        }
+        if(words[0] == "L"){
+            GD.Print(words[0]);
+            GD.Print(words[1]);
+            GD.Print(words[2]);
+            GD.Print(words[3]);
+            GD.Print(words[4]);
+            pkt.playerID = words[1].ToInt();
+            pkt.px = words[2];
+            pkt.py = words[3];
+            pkt.pz = words[4];
+            mpm.playerRespawn(pkt);
+        }
+    }
+    public void broadcastPlayerRespawn(playerLifePacket pkt){
 
     }
-    public async System.Threading.Tasks.Task clientAcceptGenericTCPSignal(){
+    public async System.Threading.Tasks.Task acceptGenericTCPSignal(){
         //var p = client.Client.EndReceive();
-        try{
-            /*
-            recieved = new byte[client.ReceiveBufferSize];
-            var genRecv = await client.Client.ReceiveAsync(recieved,SocketFlags.None);
-            string strr = System.Text.Encoding.ASCII.GetString(recieved); //the message incoming
-            Godot.GD.Print(strr);
-            Godot.GD.Print('\n');
-            */
+        if(mpm.hosting){
+            try{
+                if(clientFromListener.ReceiveBufferSize > 0){
+                    NetworkStream stm = clientFromListener.GetStream();
+                    string strr = "";
+                    int offset = 0;
+                    //recieved = new byte[client.ReceiveBufferSize];
+                    byte[]buffer = new byte[50];
+                    int bytesRead = await stm.ReadAsync(buffer, offset, buffer.Length);
+                        offset += bytesRead;
+                        strr = System.Text.Encoding.ASCII.GetString(buffer); //the message incoming
+                        Godot.GD.Print('\n');
+                    GD.Print("Fuck!");
+                    processGenericTCPSignal(strr);
+                    Godot.GD.Print('\n');
+                    stm.Flush();
+                }
+            }
+            catch(Exception e){
+                GD.Print(e);
+            }
         }
-        catch{
+        else if (!mpm.hosting){
+            try{
+                if(client.ReceiveBufferSize > 0){
+                    NetworkStream stm = client.GetStream();
+                    string strr = "";
+                    int offset = 0;
+                    recieved = new byte[client.ReceiveBufferSize];
+                    byte[]buffer = new byte[50];
+                    int bytesRead = await stm.ReadAsync(buffer, offset, buffer.Length - offset);
+                        offset += bytesRead;
+                        strr = System.Text.Encoding.ASCII.GetString(buffer); //the message incoming
+                        Godot.GD.Print('\n');
+                
+                    processGenericTCPSignal(strr);
+                    Godot.GD.Print('\n');
+                    stm.Flush();
+                }
+            }
+            catch{
 
+            }
         }
         
-        if(client.ReceiveBufferSize > 0)
-        {
-            NetworkStream stm = client.GetStream();
-            string strr = "";
-            int offset = 0;
-            recieved = new byte[client.ReceiveBufferSize];
-            byte[]buffer = new byte[20];
-            while (offset < client.ReceiveBufferSize)
-                {
-                int bytesRead = await stm.ReadAsync(buffer, offset, buffer.Length - offset);
-                offset += bytesRead;
-                byte[] firstStrings = {recieved[1]};
-                strr = System.Text.Encoding.ASCII.GetString(buffer); //the message incoming
-                Godot.GD.Print(strr);
-                Godot.GD.Print('\n');
-                }
-            //await stm.ReadAsync(recieved, 0, client.ReceiveBufferSize);             
-            strr = System.Text.Encoding.ASCII.GetString(recieved); //the message incoming
-            Godot.GD.Print(strr);
-            Godot.GD.Print('\n');
-            stm.Flush();
-         }
+        
+
          //return;
         //await determin
     }

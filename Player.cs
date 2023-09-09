@@ -81,9 +81,18 @@ public partial class Player : CharacterBody3D
 		col.Disabled = false;
 		stateMachine.ChangeState(stateMachine.fallingState);
 		Position = startingPosition;
+		mpm.broadcastRespawn(id, Position);
+	}
+		public void respawn(Vector3 location){
+		dead = false;
+		col.Disabled = false;
+		stateMachine.ChangeState(stateMachine.fallingState);
+		Position = location;
 	}
 	public void die(Vector3 rotation){
-		mpm.broadcastDeath(id, rotation);
+		if(mpm.hosting){
+			mpm.broadcastDeath(id, rotation);
+		}
 		dead = true;
 		col.Disabled = true;
 		Node parent = GetParent();

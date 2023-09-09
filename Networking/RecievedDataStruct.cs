@@ -12,6 +12,17 @@ public struct RecievedDataStruct{
     public string rotation;
     
 }
+public struct enemyMovePacket{
+    public char type;
+
+    public char anim;
+    public int enemyNumber;
+    //public string position;
+    public string px;
+    public string py;
+    public string pz;
+    public string rotation;
+}
 public struct playerHitPacket{
     public char type;
     public int recieverID;
@@ -31,7 +42,11 @@ public struct rewindingPacket{
 }
 public struct playerLifePacket{
     public int playerID;
-
+    public string px;
+    public string py;
+    public string pz;
     public int Dying;
-    
+
+    public int Disconnect;
+
 }

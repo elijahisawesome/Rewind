@@ -2,7 +2,7 @@ using Godot;
 
 public abstract partial class BaseEnemy:CharacterBody3D{
     char baseState = 'I';
-
+    public int id;
 
     public abstract bool CheckVision();
 
