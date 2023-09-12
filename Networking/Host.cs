@@ -29,7 +29,7 @@ public class UDPRecieve{
             
         }
         catch(SocketException e){
-
+            GD.Print(e);
         }
         
     }
@@ -109,4 +109,5 @@ public class UDPRecieve{
     public void clearBuffer(){
         
     }
+
 }

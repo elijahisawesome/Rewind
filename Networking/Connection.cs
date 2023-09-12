@@ -13,7 +13,7 @@ public class TCPConnection{
     TcpListener listener;
     MultiplayerManager mpm;
     byte[] recieved;
-    int defaultPort = 11002;
+    int defaultPort = 11001;
 
     bool isServer = false;
 
@@ -32,16 +32,21 @@ public class TCPConnection{
             client.BeginConnect(address,11001,new System.AsyncCallback(acceptSocketCallbackCli),client);
         }
     }
-
+    public TcpClient setClientFromListenerForMPlayers(){
+        return clientFromListener;
+    }
+    public TcpClient getTCPClientForClient(){
+        return client;
+    }
     private async void acceptSocketCallbackServ(System.IAsyncResult result){
         Godot.GD.Print("Hosting from callback");
         
         clientFromListener = listener.EndAcceptTcpClient(result);
         //NetworkStream stream = clientFromListener.GetStream();
         System.Net.IPEndPoint endPoint = clientFromListener.Client.RemoteEndPoint as System.Net.IPEndPoint;
-        
         mpm.playerConnect(endPoint.Address.ToString());
-            
+        listener.BeginAcceptTcpClient(new System.AsyncCallback(acceptSocketCallbackServ), listener);
+    
     }
     private async void acceptSocketCallbackCli(System.IAsyncResult result){
         //Socket clientSocket = client.
@@ -60,7 +65,7 @@ public class TCPConnection{
          determineNumberOfPlayersAndMyPortClient(strr);
     }
 
-    public void serverSendClientDeath(int id, Vector3 rotation){
+    public void serverSendClientDeath(int id, Vector3 rotation, TcpClient cli){
         string deliminator = "/";
         string strr = "D";
         strr+=deliminator;
@@ -75,7 +80,7 @@ public class TCPConnection{
         
         System.Text.ASCIIEncoding asen= new System.Text.ASCIIEncoding();
         byte[] ba=asen.GetBytes(strr);
-        NetworkStream stm = clientFromListener.GetStream();
+        NetworkStream stm = cli.GetStream();
         stm.Write(ba,0,ba.Length);
         stm.Flush();
     }
@@ -98,7 +103,7 @@ public class TCPConnection{
         stm.Write(ba,0,ba.Length);
         stm.Flush();
     }
-    public async void serverSendClientRespawn(playerLifePacket pkt){
+    public async void serverSendClientRespawn(playerLifePacket pkt, TcpClient cli){
         string deliminator = "/";
         string strr = "L";
         strr+=deliminator;
@@ -113,20 +118,27 @@ public class TCPConnection{
 
         System.Text.ASCIIEncoding asen= new System.Text.ASCIIEncoding();
         byte[] ba=asen.GetBytes(strr);
-        NetworkStream stm = clientFromListener.GetStream();
+        NetworkStream stm = cli.GetStream();
         stm.Write(ba,0,ba.Length);
         stm.Flush();
+    }
+    public void serverSendNewClientConnect(TcpClient cli, MPlayer newPlayer){
+        string strr = "P";
+        strr+="/";
+        strr += newPlayer.id.ToString();
+        
+        System.Text.ASCIIEncoding asen= new System.Text.ASCIIEncoding();
+        byte[] ba=asen.GetBytes(strr);
+        NetworkStream stm = cli.GetStream();
+        stm.Write(ba,0,ba.Length);
+        stm.Flush();
+
     }
     public void processGenericTCPSignal(string info){
         GD.Print(info);
         playerLifePacket pkt = new playerLifePacket();
         string[] words = info.Split('/');
         if(words[0] == "D"){
-            GD.Print(words[0]);
-            GD.Print(words[1]);
-            GD.Print(words[2]);
-            GD.Print(words[3]);
-            GD.Print(words[4]);
             pkt.Dying = 1;
             pkt.playerID = words[1].ToInt();
             pkt.px = words[2];
@@ -135,27 +147,35 @@ public class TCPConnection{
             mpm.playerDied(pkt);
         }
         if(words[0] == "L"){
-            GD.Print(words[0]);
-            GD.Print(words[1]);
-            GD.Print(words[2]);
-            GD.Print(words[3]);
-            GD.Print(words[4]);
+            pkt.Dying = 0;
             pkt.playerID = words[1].ToInt();
             pkt.px = words[2];
             pkt.py = words[3];
             pkt.pz = words[4];
             mpm.playerRespawn(pkt);
         }
+        if(words[0] == "P"){
+            pkt.playerID = words[1].ToInt();
+            pkt.Spawn = true;
+            //this is for clients
+            mpm.playerJoined(pkt);
+        }
+        if(words[0] == "J"){
+            pkt.playerID = words[1].ToInt();
+            pkt.Spawn = true;
+            //this is for clients
+            mpm.clientSpawnCurrentPlayers(pkt);
+        }
     }
     public void broadcastPlayerRespawn(playerLifePacket pkt){
 
     }
-    public async System.Threading.Tasks.Task acceptGenericTCPSignal(){
+    public async System.Threading.Tasks.Task acceptGenericTCPSignal(TcpClient cli){
         //var p = client.Client.EndReceive();
         if(mpm.hosting){
             try{
-                if(clientFromListener.ReceiveBufferSize > 0){
-                    NetworkStream stm = clientFromListener.GetStream();
+                if(cli.ReceiveBufferSize > 0){
+                    NetworkStream stm = cli.GetStream();
                     string strr = "";
                     int offset = 0;
                     //recieved = new byte[client.ReceiveBufferSize];
@@ -207,6 +227,18 @@ public class TCPConnection{
     }
     public async void clientRecieveClientStatusFromServer(){
 
+    }
+    public void sendNewClientAllCurrentPlayers(MPlayer newPlayer,int playerCount){
+        string strr = "J";
+        strr+="/";
+        strr += playerCount.ToString();
+        var cli = newPlayer.getTCPClient();
+        
+        System.Text.ASCIIEncoding asen= new System.Text.ASCIIEncoding();
+        byte[] ba=asen.GetBytes(strr);
+        NetworkStream stm = cli.GetStream();
+        stm.Write(ba,0,ba.Length);
+        stm.Flush();
     }
     private void determineNumberOfPlayersAndMyPortClient(string info){
         //this is a really bad way to do this, don't wanna think about structure rn tho.

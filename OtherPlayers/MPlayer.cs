@@ -1,14 +1,16 @@
 using Godot;
 using System;
 using System.Diagnostics;
+using System.Net.Sockets;
 //using System.Numerics;
 
 
 public partial class MPlayer : CharacterBody3D
 {
 	public int id;
-	UDPSend send;
-	UDPRecieve recieve;
+	public UDPSend send;
+	public UDPRecieve recieve;
+	TcpClient tcpClient;
 	System.Net.Sockets.UdpClient client;
 	Player localPlayer;
 	himbo_base characterModel;
@@ -23,6 +25,7 @@ public partial class MPlayer : CharacterBody3D
 	char packetType = '\0';
 	public bool dead;
 	private Node parent;
+	public char anim;
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
@@ -37,6 +40,12 @@ public partial class MPlayer : CharacterBody3D
 	public override void _PhysicsProcess(double dleta){
 		MoveAndSlide();
 	}
+	public void setTCPClient(TcpClient cl){
+		tcpClient = cl;
+	}
+	public TcpClient getTCPClient(){
+		return tcpClient;
+	}
 	public void setRecieve(string IP){
 		client = new System.Net.Sockets.UdpClient();
 		client.Client.SetSocketOption(System.Net.Sockets.SocketOptionLevel.Socket, System.Net.Sockets.SocketOptionName.ReuseAddress, true);
@@ -44,15 +53,14 @@ public partial class MPlayer : CharacterBody3D
 
 		recieve = new UDPRecieve(ref client);
 		send = new UDPSend(ref client);
-		GD.Print("hostPort");
-		GD.Print(hostPort);
-		GD.Print(port);
-		GD.Print("port");
 		recieve.Connect(IP, hostPort);
 		send.Connect(IP, port);
 	}
 	public override void _Process(double delta)
 	{
+	}
+	public void sendNewPlayer(){
+		
 	}
 
 	public void hostTransmitPositionToPlayers(RecievedDataStruct str){
@@ -114,6 +122,7 @@ public partial class MPlayer : CharacterBody3D
 		
 	}
 	private void setHimboAnimation(char animChar){
+		anim = animChar;
 		characterModel.swtichAnimation(animChar);
 	}
 	void setDamage(playerHitPacket pkt){
@@ -130,8 +139,6 @@ public partial class MPlayer : CharacterBody3D
 	}
 	public void die(Godot.Vector3 rotation){
 		//this.Visible = false;
-
-		//TODO: change this, make several bodies spawn attached to the root node, fire em off and then remove them after a timer. Remove the player's collision as well.
 		
 		dead = true;
 		collider.Disabled = true;

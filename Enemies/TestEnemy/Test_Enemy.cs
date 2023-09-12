@@ -59,7 +59,12 @@ public partial class Test_Enemy : BaseEnemy
 		
 
 	}
-
+	public override void setRotation(string strRot){
+        String[] Rots = strRot.Split(',');
+		string x = Rots[0].Remove(0,1);
+		string z = Rots[2].Remove(Rots[2].Length -1,1);
+		Rotation = new Vector3(x.ToFloat(), Rots[1].ToFloat(),z.ToFloat());
+    }
     public override bool CheckVision()
     {
 	var spaceState = GetWorld3D().DirectSpaceState;

@@ -4,6 +4,7 @@ public abstract partial class BaseEnemy:CharacterBody3D{
     char baseState = 'I';
     public int id;
 
+    public abstract void setRotation(string str);
     public abstract bool CheckVision();
 
     public abstract void MoveToTarget(double delta);

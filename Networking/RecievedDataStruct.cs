@@ -47,6 +47,8 @@ public struct playerLifePacket{
     public string pz;
     public int Dying;
 
+    public bool Spawn;
+
     public int Disconnect;
 
 }

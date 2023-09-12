@@ -5,3 +5,7 @@ build1.console.exe
 3D/
 Environments/
 Enemies/GenericAssets/
+*.TMP
+*.exe
+*.glb
+*.import

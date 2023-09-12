@@ -32,6 +32,6 @@ public class StateMachine{
         currentState.MaintainState(delta);
     }
     public void changeAnimation(char c){
-
+        player.setAnimationChar(c);
     }
 }
