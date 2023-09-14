@@ -9,3 +9,5 @@ Enemies/GenericAssets/
 *.exe
 *.glb
 *.import
+*.gltf
+*.obj
