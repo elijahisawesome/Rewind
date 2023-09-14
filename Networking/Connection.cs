@@ -170,8 +170,8 @@ public class TCPConnection{
     public void broadcastPlayerRespawn(playerLifePacket pkt){
 
     }
-    public async System.Threading.Tasks.Task acceptGenericTCPSignal(TcpClient cli){
-        //var p = client.Client.EndReceive();
+    public async System.Threading.Tasks.Task acceptGenericTCPSignal(TcpClient cli, MPlayer player){
+        //handle disconnects
         if(mpm.hosting){
             try{
                 if(cli.ReceiveBufferSize > 0){
@@ -186,12 +186,14 @@ public class TCPConnection{
                         Godot.GD.Print('\n');
                     GD.Print("Fuck!");
                     processGenericTCPSignal(strr);
-                    Godot.GD.Print('\n');
                     stm.Flush();
                 }
             }
             catch(Exception e){
-                GD.Print(e);
+                if(e is System.InvalidOperationException){
+                    cli.Close();
+                    cli.Dispose();
+                }
             }
         }
         else if (!mpm.hosting){
@@ -212,8 +214,11 @@ public class TCPConnection{
                     stm.Flush();
                 }
             }
-            catch{
-
+            catch(Exception e){
+                if(e is System.InvalidOperationException){
+                    cli.Close();
+                    cli.Dispose();
+                }
             }
         }
         

@@ -114,12 +114,12 @@ public partial class Player : CharacterBody3D
 		leg.Position = Position;
 		torso.Position = Position;
 		head.Position = Position;
-		var knockBack = 15f;
+		var knockBack = 5f;
 		rotation = rotation*knockBack;
-		arm.ApplyCentralImpulse(rotation);
-		head.ApplyCentralImpulse(rotation);
-		leg.ApplyCentralImpulse(rotation);
-		torso.ApplyCentralImpulse(rotation);
+		arm.ApplyImpulse(rotation);
+		head.ApplyImpulse(rotation);
+		leg.ApplyImpulse(rotation);
+		torso.ApplyImpulse(rotation);
 		parent.CallDeferred("add_child",(arm));
 		parent.CallDeferred("add_child",(leg));
 		parent.CallDeferred("add_child",(torso));
@@ -127,6 +127,7 @@ public partial class Player : CharacterBody3D
 
 		
 	}
+	
 	public void enemyHit(MPlayer target){
 		GD.Print(target.port);
 		GD.Print(target.hostPort);

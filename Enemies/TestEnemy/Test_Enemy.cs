@@ -81,8 +81,9 @@ public partial class Test_Enemy : BaseEnemy
 					if(body.GetType().ToString() == "Player"){
 						end = player.rayPos;
 					}
+					
 
-					var origin = GlobalPosition;
+					var origin = new Vector3(GlobalPosition.X,GlobalPosition.Y+1.5f,GlobalPosition.Z);
 					
 					var shot = PhysicsRayQueryParameters3D.Create(origin, end);
 					shot.CollideWithAreas = false;
@@ -197,12 +198,13 @@ public partial class Test_Enemy : BaseEnemy
 
     public override void Attack()
     {
+		Vector3 pos = new Vector3(target.Position.X,target.Position.Y+2,target.Position.Z) - Position;
 		if(target is Player){
-			(target as Player).die(Rotation);
+			(target as Player).die(pos);
 		}
 		else if(target is MPlayer && !(target as MPlayer).dead){
-			(target as MPlayer).broadcastDeath(Rotation);
-			(target as MPlayer).die(Rotation);
+			(target as MPlayer).broadcastDeath(pos);
+			(target as MPlayer).die(pos);
 		}
 		GD.Print("Hey!");
         

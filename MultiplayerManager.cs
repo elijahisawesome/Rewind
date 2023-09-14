@@ -97,7 +97,7 @@ public override async void _PhysicsProcess(double delta)
 				player.broadcastPosition(ref packet);
 				player.determineAnimationAndBroadcast(ref packet);
 
-				connection.acceptGenericTCPSignal(tcpClient);
+				connection.acceptGenericTCPSignal(tcpClient, host);
 				
 				
 				clientSend.sendData(packet,clientSend.RemoteIpEndPoint);
@@ -191,7 +191,7 @@ public override async void _PhysicsProcess(double delta)
 			//Fix this shit later
 			//Get Orientation of all clients
 			for(int x = 0; x<playerCount; x++){
-				connection.acceptGenericTCPSignal(mPlayers[x].getTCPClient());
+				connection.acceptGenericTCPSignal(mPlayers[x].getTCPClient(), mPlayers[x]);
 				mPlayers[x].recieveUDPPacket();
 
 				var splitDataPacket = mPlayers[x].getPresplitPacket();
@@ -293,6 +293,9 @@ public override async void _PhysicsProcess(double delta)
 			connection.serverSendClientRespawn(pkt, mPlayers[x].getTCPClient());
 		}
 		
+	}
+	public void ClosedConnection(MPlayer mPlayer){
+		mPlayers[mPlayer.id] = null;
 	}
 	public void playerDied(playerLifePacket pkt){
 		Vector3 rotation = new Vector3(pkt.px.ToFloat(),pkt.py.ToFloat(),pkt.pz.ToFloat());

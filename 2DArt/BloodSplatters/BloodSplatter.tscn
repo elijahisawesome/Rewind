@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3 uid="uid://1f6omynybacg"]
+
+[ext_resource type="Texture2D" uid="uid://b46hyy5di65t0" path="res://2DArt/BloodSplatters/BloodSplatter1.png" id="1_yvhqu"]
+[ext_resource type="Script" path="res://2DArt/BloodSplatters/BloodSplatter.cs" id="2_t3psa"]
+
+[node name="BloodSplatter" type="Sprite3D"]
+transform = Transform3D(4, 0, 0, 0, 4, 0, 0, 0, 4, 0, 0, 0)
+texture = ExtResource("1_yvhqu")
+script = ExtResource("2_t3psa")
