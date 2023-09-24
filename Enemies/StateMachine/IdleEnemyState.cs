@@ -6,7 +6,7 @@ public class IdleEnemyState : EnemyBaseState
     {
         eStateMachine = e;
         enemy = eStateMachine.enemy;
-        enemy.SwitchBaseState('I');
+        enemy.switchStateChar('I');
         Godot.GD.Print("Idle");
     }
 

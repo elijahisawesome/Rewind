@@ -7,7 +7,7 @@ public partial class Camera3D : Godot.Camera3D
 	// Called when the node enters the scene tree for the first time.
 	private float prevX;
 	private float prevY;
-	private float mouseAccel = .035f;
+	private float mouseAccel = .0007f;
 	private float maxYaw;
 	private bool readyToMove;
 	public bool fireCheck;
@@ -46,6 +46,7 @@ public partial class Camera3D : Godot.Camera3D
 			this.RotationDegrees = new Vector3(newX, this.RotationDegrees[1], this.RotationDegrees[2]);
 		}
 		if(@event is InputEventMouseButton && Input.MouseMode == Input.MouseModeEnum.Visible){
+			
 			Input.MouseMode = Input.MouseModeEnum.Captured;
 		}
 		else if(@event is InputEventMouseButton && @event.IsPressed()){

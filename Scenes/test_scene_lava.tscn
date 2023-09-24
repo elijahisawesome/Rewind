@@ -1,0 +1,25 @@
+[gd_scene load_steps=5 format=3 uid="uid://6ulj566cqvj5"]
+
+[ext_resource type="PackedScene" uid="uid://bpj8vhgang7vq" path="res://Environments/Building_3_Navmesh.tscn" id="1_tj2m5"]
+[ext_resource type="PackedScene" uid="uid://iyeds18qvhoc" path="res://LocalPlayer/Player.tscn" id="2_6g5x6"]
+[ext_resource type="PackedScene" uid="uid://khyelnfkst7y" path="res://Networking/MultiplayerManager.tscn" id="3_g8n3s"]
+[ext_resource type="PackedScene" uid="uid://c21nraja1ibbx" path="res://Enemies/TestEnemy/Test_Enemy.tscn" id="4_lqrmy"]
+
+[node name="Test_Scene_Lava" type="Node"]
+
+[node name="NavigationRegion3D" parent="." instance=ExtResource("1_tj2m5")]
+transform = Transform3D(1.1, 0, 0, 0, 1.1, 0, 0, 0, 1.1, 0, 0, 0)
+
+[node name="Player" parent="." instance=ExtResource("2_6g5x6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00627398, 8.52233, -16.0824)
+
+[node name="MultiplayerManager" parent="." instance=ExtResource("3_g8n3s")]
+unique_name_in_owner = true
+
+[node name="Test_Enemy" parent="." instance=ExtResource("4_lqrmy")]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -19.9366, 8.30345, 9.8649)
+metadata/ID = 6
+
+[node name="Test_Enemy2" parent="." instance=ExtResource("4_lqrmy")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 20.1803, 8.11085, -9.8272)
+metadata/ID = 7

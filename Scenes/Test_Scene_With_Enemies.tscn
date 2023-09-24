@@ -18,8 +18,8 @@ unique_name_in_owner = true
 
 [node name="Test_Enemy2" parent="." instance=ExtResource("4_t32gl")]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, -11.263, 1.61208, 5.75773)
-metadata/ID = 6
+metadata/Id = 6
 
 [node name="Test_Enemy" parent="." instance=ExtResource("4_t32gl")]
 transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 10.315, 1.61208, -6.80074)
-metadata/ID = 7
+metadata/Id = 7

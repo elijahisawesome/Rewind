@@ -8,7 +8,7 @@ public class AlertEnemyState : EnemyBaseState
     {
         stateMachine = e;
         enemy = stateMachine.enemy;
-        enemy.SwitchBaseState('A');
+        enemy.switchStateChar('A');
         enemy.SetTargetLastPosition();
         Godot.GD.Print("Alert!");
     }

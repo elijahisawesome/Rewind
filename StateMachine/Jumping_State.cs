@@ -23,6 +23,7 @@ public class JumpingState : PlayerBaseState
         bool onGround = stateMachine.player.isOnGround();
         bool moving = !stateMachine.player.isStandingStill();
         stateMachine.player.applyGravity(delta);
+        stateMachine.player.airMove(delta);
         if(onGround){
             if(moving){
                 stateMachine.ChangeState(stateMachine.walkingState);

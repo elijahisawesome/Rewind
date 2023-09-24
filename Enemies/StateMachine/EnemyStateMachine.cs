@@ -27,5 +27,8 @@ public class EnemyStateMachine{
         currentState = newState;
         currentState.EnterState(this);
     }
+    public void setStateChar(char c){
+        enemy.switchStateChar(c);
+    }
     
 }

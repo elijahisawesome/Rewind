@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://iyeds18qvhoc"]
+[gd_scene load_steps=12 format=3 uid="uid://iyeds18qvhoc"]
 
 [ext_resource type="Script" path="res://Player.cs" id="1_g6hfm"]
 [ext_resource type="Script" path="res://Camera3D.cs" id="2_akrxr"]
@@ -6,11 +6,15 @@
 [ext_resource type="PackedScene" uid="uid://cosyybq18f384" path="res://UI/ConnectScreenUI.tscn" id="4_xjscy"]
 [ext_resource type="Texture2D" uid="uid://j4w1b1y8ufpe" path="res://2DArt/xHair.png" id="4_y2sxu"]
 [ext_resource type="Script" path="res://LocalPlayer/Gun.cs" id="5_fchk4"]
+[ext_resource type="PackedScene" uid="uid://clfo55tbahcvr" path="res://LocalPlayer/player_hud.tscn" id="5_fe4k5"]
 [ext_resource type="PackedScene" uid="uid://husp42oe65x8" path="res://3D/Animations/himbo_base.tscn" id="7_pik7b"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_an347"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_cmap5"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_kf3dl"]
+size = Vector3(3, 1, 1)
 
 [node name="Player" type="CharacterBody3D"]
 script = ExtResource("1_g6hfm")
@@ -49,6 +53,9 @@ layout_mode = 2
 texture = ExtResource("4_y2sxu")
 stretch_mode = 3
 
+[node name="PlayerHUD" parent="Camera3D" instance=ExtResource("5_fe4k5")]
+visible = false
+
 [node name="ConnectScreenUI" parent="." instance=ExtResource("4_xjscy")]
 
 [node name="Gun" type="Node3D" parent="."]
@@ -57,3 +64,10 @@ script = ExtResource("5_fchk4")
 [node name="HimboBase" parent="." instance=ExtResource("7_pik7b")]
 transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 1.92599, 0)
 visible = false
+
+[node name="Area3D" type="Area3D" parent="."]
+collision_layer = 2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.51806, -0.975271)
+shape = SubResource("BoxShape3D_kf3dl")

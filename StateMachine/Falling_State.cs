@@ -20,9 +20,9 @@ public class FallingState : PlayerBaseState
     public override void MaintainState(double delta)
     {
         //do falling movement
-        
+        stateMachine.player.airMove(delta);
         if(stateMachine.player.isOnGround()){
-            stateMachine.ChangeState(stateMachine.idleState);
+            stateMachine.ChangeState(stateMachine.walkingState);
             return;
         }
 

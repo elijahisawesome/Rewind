@@ -1,0 +1,112 @@
+[gd_scene load_steps=9 format=3 uid="uid://clfo55tbahcvr"]
+
+[ext_resource type="Script" path="res://LocalPlayer/StaminaBar.cs" id="1_wevcb"]
+[ext_resource type="Script" path="res://LocalPlayer/PlayerStatusFace.cs" id="3_bnap5"]
+[ext_resource type="FontFile" uid="uid://yrs068g8aml0" path="res://Fonts/UnifrakturCook/UnifrakturCook-Bold.ttf" id="4_b8n5c"]
+[ext_resource type="Texture2D" uid="uid://bl1ss0ebrhhh0" path="res://2DArt/HUDElements/Bars/headstone.png" id="5_3uqxr"]
+[ext_resource type="Texture2D" uid="uid://rhyulww0gtsa" path="res://2DArt/HUDElements/Bars/NEW-BB-BAR-DESAT.png" id="5_dpfuy"]
+[ext_resource type="Texture2D" uid="uid://bfqu04twc5m3d" path="res://2DArt/HUDElements/Bars/NEW-BB-FRAME.png" id="6_7f0wj"]
+[ext_resource type="Texture2D" uid="uid://bj80rhyc8wyu3" path="res://2DArt/HUDElements/Bars/NEW-BB-BAR.png" id="7_b0sts"]
+[ext_resource type="Texture2D" uid="uid://bc7nsp58d4jta" path="res://2DArt/HUDElements/Faces/disconnected-icon.png" id="8_25ugt"]
+
+[node name="PlayerHUD" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -388.0
+offset_right = 388.0
+offset_bottom = 256.0
+grow_horizontal = 2
+
+[node name="MPlayerStatusFace" type="TextureRect" parent="HBoxContainer2"]
+layout_mode = 2
+texture = ExtResource("8_25ugt")
+script = ExtResource("3_bnap5")
+
+[node name="MPlayerStatusFace1" type="TextureRect" parent="HBoxContainer2"]
+layout_mode = 2
+texture = ExtResource("8_25ugt")
+script = ExtResource("3_bnap5")
+
+[node name="MPlayerStatusFace3" type="TextureRect" parent="HBoxContainer2"]
+layout_mode = 2
+texture = ExtResource("8_25ugt")
+script = ExtResource("3_bnap5")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -200.0
+grow_horizontal = 2
+grow_vertical = 0
+scale = Vector2(0.7, 0.6)
+pivot_offset = Vector2(960, 100)
+
+[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer"]
+custom_minimum_size = Vector2(200, 200)
+layout_mode = 2
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = -110
+theme_override_constants/margin_right = -19
+theme_override_constants/margin_bottom = -40
+
+[node name="PlayerDeathCounterContainer" type="TextureRect" parent="HBoxContainer/MarginContainer"]
+layout_mode = 2
+texture = ExtResource("5_3uqxr")
+expand_mode = 2
+stretch_mode = 5
+
+[node name="PlayerDeathCounter" type="Label" parent="HBoxContainer/MarginContainer/PlayerDeathCounterContainer"]
+layout_mode = 2
+offset_left = 77.0
+offset_top = 150.0
+offset_right = 277.0
+offset_bottom = 200.0
+pivot_offset = Vector2(100, 100)
+theme_override_fonts/font = ExtResource("4_b8n5c")
+theme_override_font_sizes/font_size = 50
+text = "0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MarginContainer2" type="MarginContainer" parent="HBoxContainer"]
+custom_minimum_size = Vector2(200, 200)
+layout_mode = 2
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_top = 0
+theme_override_constants/margin_right = 0
+
+[node name="StaminaBar" type="TextureProgressBar" parent="HBoxContainer/MarginContainer2"]
+layout_mode = 2
+texture_under = ExtResource("5_dpfuy")
+texture_over = ExtResource("6_7f0wj")
+texture_progress = ExtResource("7_b0sts")
+script = ExtResource("1_wevcb")
+
+[node name="MarginContainer3" type="MarginContainer" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 10
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_top = 0
+theme_override_constants/margin_right = 0
+theme_override_constants/margin_bottom = 0
+
+[node name="PlayerStatusFace" type="TextureRect" parent="HBoxContainer/MarginContainer3"]
+layout_mode = 2
+texture = ExtResource("8_25ugt")
+expand_mode = 3
+script = ExtResource("3_bnap5")

@@ -1,7 +1,7 @@
 using Godot;
 
 public abstract partial class BaseEnemy:CharacterBody3D{
-    char baseState = 'I';
+    char stateChar = 'I';
     public int id;
 
     public abstract void setRotation(string str);
@@ -9,8 +9,11 @@ public abstract partial class BaseEnemy:CharacterBody3D{
 
     public abstract void MoveToTarget(double delta);
 
-    public void SwitchBaseState(char s){
-        baseState = s;
+    public void switchStateChar(char s){
+        stateChar = s;
+    }
+    public char getStateChar(){
+        return stateChar;
     }
     public abstract void SetTargetLastPosition();
 

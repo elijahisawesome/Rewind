@@ -11,3 +11,11 @@ Enemies/GenericAssets/
 *.import
 *.gltf
 *.obj
+*.png
+*.kra
+*.import
+Release/
+Fonts/
+2DArt/HUDElements/Bars
+2DArt/HUDElements/Faces
+2DArt/HUDElements

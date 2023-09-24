@@ -7,7 +7,7 @@ public class SearchingEnemyState : EnemyBaseState
         stateMachine = e;
         enemy = stateMachine.enemy;
         enemy.ResetRoamCounter();
-        enemy.SwitchBaseState('S');
+        enemy.switchStateChar('S');
         Godot.GD.Print("searching...");
     }
 

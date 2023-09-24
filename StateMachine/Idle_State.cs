@@ -22,6 +22,10 @@ public class IdleState : PlayerBaseState
         Vector2 inputDir = Input.GetVector("left", "right", "up", "down");
         bool jumping = Input.IsActionJustPressed("ui_accept");
         bool walking = false;
+        bool panicing = Input.IsActionJustPressed("Panic");
+        
+        
+        
         for(int x = 0; x<=inputDir.Length(); x++){
             if(inputDir[x] != 0){
                 walking = true;
@@ -38,6 +42,9 @@ public class IdleState : PlayerBaseState
         if(jumping){
             //transition to jumpingstate
             stateMachine.ChangeState(stateMachine.jumpingState);
+        }
+        if(panicing){
+            stateMachine.ChangeState(stateMachine.panicState);
         }
     }
 }

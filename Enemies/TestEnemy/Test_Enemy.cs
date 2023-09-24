@@ -17,7 +17,6 @@ public partial class Test_Enemy : BaseEnemy
 	public NavigationAgent3D nav;
 	public Player player;
 	Area3D visionCone;
-
 	Area3D proximitySensor;
 	EnemyStateMachine stateMachine;
 	MultiplayerManager mpm;
@@ -56,8 +55,6 @@ public partial class Test_Enemy : BaseEnemy
 			stateMachine.process(delta);
 			mpm.hostTransmitEnemyState((int)GetMeta("ID"));
 		}
-		
-
 	}
 	public override void setRotation(string strRot){
         String[] Rots = strRot.Split(',');
@@ -72,34 +69,41 @@ public partial class Test_Enemy : BaseEnemy
 			var bodies = visionCone.GetOverlappingBodies();
 			var closeBodies = proximitySensor.GetOverlappingBodies();
 			foreach(var body in bodies){
-				Godot.Vector3 rayTargetPos = new Godot.Vector3();
-				if(body.GetType().ToString() == "Player" || body.GetType().ToString() == "MPlayer"){
-					target = (CharacterBody3D)body;
-					
+				for(int x = 0; x< 2; x++){
 
-					var end = target.Position;
-					if(body.GetType().ToString() == "Player"){
-						end = player.rayPos;
-					}
-					
+				
+					Godot.Vector3 rayTargetPos = new Godot.Vector3();
+					if(body.GetType().ToString() == "Player" || body.GetType().ToString() == "MPlayer"){
+						target = (CharacterBody3D)body;
+						
 
-					var origin = new Vector3(GlobalPosition.X,GlobalPosition.Y+1.5f,GlobalPosition.Z);
-					
-					var shot = PhysicsRayQueryParameters3D.Create(origin, end);
-					shot.CollideWithAreas = false;
-					
-					
-					shot.Exclude = excludes;
-					
-					var result = spaceState.IntersectRay(shot);
-					
-					if(result.Count > 0){
+						var end = target.Position;
+						if(body.GetType().ToString() == "Player"){
+							end = player.rayPos;
+						}
+						end = new Vector3(end.X, end.Y+x, end.Z);
+
+						var origin = new Vector3(GlobalPosition.X,GlobalPosition.Y+1f,GlobalPosition.Z);
+						end = new Vector3(end.X,end.Y+1f,end.Z);
+						var shot = PhysicsRayQueryParameters3D.Create(origin, end);
+						shot.CollideWithAreas = false;
 						
-						string res = ((CharacterBody3D)result["collider"]).GetType().ToString();
 						
-						if(res == "Player" || res == "MPlayer"){
-							
-							return true;
+						shot.Exclude = excludes;
+						
+						var result = spaceState.IntersectRay(shot);
+						
+						if(result.Count > 0){
+							if(result["collider"].ToString().Contains("CharacterBody3D")){
+								string res = ((CharacterBody3D)result["collider"]).GetType().ToString();
+								if(res == "Player" || res == "MPlayer"){
+									var distance = origin - end;
+
+									//testInstanceDrawBox(distance,end);
+									return true;
+								}
+							}
+
 						}
 					}
 					
@@ -128,9 +132,14 @@ public partial class Test_Enemy : BaseEnemy
 					if(result.Count > 0){
 						//var collider = rayCast.GetCollider();
 						//GD.Print(result["collider"]);
-						string res = ((CharacterBody3D)result["collider"]).GetType().ToString();
-						if(res == "Player" || res == "MPlayer"){
-							return true;
+						if(result["collider"].ToString().Contains("CharacterBody3D")){
+							string res = ((CharacterBody3D)result["collider"]).GetType().ToString();
+							if(res == "Player" || res == "MPlayer"){
+								var distance = origin - end;
+
+								testInstanceDrawBox(distance,end);
+								return true;
+							}
 						}
 					}
 
@@ -138,11 +147,30 @@ public partial class Test_Enemy : BaseEnemy
 			}
 		}
 		catch(Exception e){
-
+			
 		}
 		return false;
-    }
 
+
+	}
+    async void testInstanceDrawBox(Vector3 Length, Vector3 targetLocation){
+		MeshInstance3D drawBox = new MeshInstance3D();
+		drawBox.Mesh = new BoxMesh();
+		
+		
+		drawBox.Scale = new Vector3(.1f,.1f,Length.Length());
+		CallDeferred("add_child",drawBox);
+		var sceneTree = GetTree();
+		await ToSignal(sceneTree,"node_added");
+		
+		Vector3 Val = - drawBox.GlobalTransform.Basis.Z/2;
+		//drawBox.GlobalPosition = GlobalPosition - drawBox.GlobalTransform.Basis.Z/2;
+		drawBox.GlobalPosition = new Vector3(GlobalPosition.X,GlobalPosition.Y+1f,GlobalPosition.Z) + Val;
+		drawBox.LookAtFromPosition(drawBox.GlobalPosition,targetLocation);
+
+		await ToSignal(sceneTree,"node_added");
+		drawBox.QueueFree();
+	}
     public override void MoveToTarget(double delta)
     {
     	Godot.Vector3 velocity = Velocity;

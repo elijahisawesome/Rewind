@@ -21,6 +21,7 @@ public class WalkingState : PlayerBaseState
     {
         //do falling movement
         bool jumping = Input.IsActionJustPressed("ui_accept");
+        bool panicing = Input.IsActionJustPressed("Panic");
         stateMachine.player.walk(delta);
         
         if(jumping){
@@ -31,6 +32,9 @@ public class WalkingState : PlayerBaseState
         }
         else if(stateMachine.player.isStandingStill()){
             stateMachine.ChangeState(stateMachine.idleState);
+        }
+        else if(panicing){
+            stateMachine.ChangeState(stateMachine.panicState);
         }
     }
 }

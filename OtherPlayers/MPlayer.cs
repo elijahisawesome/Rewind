@@ -151,22 +151,18 @@ public partial class MPlayer : CharacterBody3D
 		mpm.broadcastDeath(id,rotation);
 	}
 	private void spawnGore(Godot.Vector3 rotation){
-		string bloodPath = "res://2DArt/BloodSplatters/BloodParticles.tscn";
 		string armPath = "res://3D/GoreParts/himbo_base_gore_arm.tscn";
 		string legPath = "res://3D/GoreParts/himbo_base_gore_legs.tscn";
 		string headPath = "res://3D/GoreParts/himbo_base_gore_head.tscn";
 		string torsoPath = "res://3D/GoreParts/himbo_base_gore_torso.tscn";
-		PackedScene bloodPackedScene = GD.Load<PackedScene>(bloodPath);
 		PackedScene armPackedScene = GD.Load<PackedScene>(armPath);
 		PackedScene legPackedScene = GD.Load<PackedScene>(legPath);
 		PackedScene headPackedScene = GD.Load<PackedScene>(headPath);
 		PackedScene torsoPackedScene = GD.Load<PackedScene>(torsoPath);
-		var blood = bloodPackedScene.Instantiate<BloodParticles>();
 		var arm = armPackedScene.Instantiate<himbo_base_gore_arm>();
 		var leg = legPackedScene.Instantiate<himbo_base_gore_legs>();
 		var head = headPackedScene.Instantiate<himbo_base_gore_head>();
 		var torso = torsoPackedScene.Instantiate<himbo_base_gore_torso>();
-		blood.Position = Position;
 		arm.Position = Position;
 		leg.Position = Position;
 		torso.Position = Position;
@@ -177,7 +173,6 @@ public partial class MPlayer : CharacterBody3D
 		head.ApplyImpulse(rotation);
 		leg.ApplyImpulse(rotation);
 		torso.ApplyImpulse(rotation);
-		parent.CallDeferred("add_child", blood);
 		parent.CallDeferred("add_child",(arm));
 		parent.CallDeferred("add_child",(leg));
 		parent.CallDeferred("add_child",(torso));

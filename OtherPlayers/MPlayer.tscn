@@ -1,6 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://cvpcpwe72yayl"]
+[gd_scene load_steps=5 format=3 uid="uid://cvpcpwe72yayl"]
 
 [ext_resource type="Script" path="res://OtherPlayers/MPlayer.cs" id="1_c6g7m"]
+[ext_resource type="PackedScene" uid="uid://ch74b4pbk7tpl" path="res://3D/Animations/hawaii_guy.tscn" id="2_glipl"]
 [ext_resource type="PackedScene" uid="uid://husp42oe65x8" path="res://3D/Animations/himbo_base.tscn" id="2_ms1v6"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_2op3r"]
@@ -14,5 +15,9 @@ shape = SubResource("CapsuleShape3D_2op3r")
 
 [node name="MPlayer" type="MeshInstance3D" parent="."]
 
+[node name="Hawaii-Guy" parent="MPlayer" instance=ExtResource("2_glipl")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 1, 0)
+
 [node name="HimboBase" parent="MPlayer" instance=ExtResource("2_ms1v6")]
 transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 1.97294, 0)
+visible = false
