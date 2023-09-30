@@ -1,8 +1,10 @@
-[gd_scene load_steps=8 format=3 uid="uid://c21nraja1ibbx"]
+[gd_scene load_steps=10 format=3 uid="uid://c21nraja1ibbx"]
 
 [ext_resource type="Script" path="res://Enemies/TestEnemy/Test_Enemy.cs" id="1_diofr"]
-[ext_resource type="PackedScene" uid="uid://b6uvk14v8wdre" path="res://Enemies/TestEnemy/EnemyBase.glb" id="2_38wna"]
+[ext_resource type="PackedScene" uid="uid://m8w6r7c05lyf" path="res://Enemies/TestEnemy/Enemy-Alien.glb" id="2_03e2j"]
 [ext_resource type="ArrayMesh" uid="uid://crjx1m1sqfw71" path="res://Enemies/GenericAssets/VisionCone.obj" id="3_oot0e"]
+[ext_resource type="PackedScene" uid="uid://dunyys7iu60sf" path="res://Enemies/TestEnemy/test_arm.tscn" id="4_vsl3f"]
+[ext_resource type="AudioStream" uid="uid://byicmmu00f2f5" path="res://Audio/ISeeYou.wav" id="5_ro0jk"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_f43xw"]
 
@@ -17,15 +19,16 @@ points = PackedVector3Array(0, -1, -3.22513, -2.28058, -1, -2.28058, 0, 1, 0, 2.
 script = ExtResource("1_diofr")
 metadata/Id = 0
 
-[node name="EnemyBase" parent="." instance=ExtResource("2_38wna")]
-transform = Transform3D(0.13, 0, 0, 0, 0.13, 0, 0, 0, 0.13, 0, 1.83853, 0)
+[node name="Enemy-Alien" parent="." instance=ExtResource("2_03e2j")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.0126882, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 shape = SubResource("CapsuleShape3D_f43xw")
 
 [node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
-debug_enabled = true
+path_height_offset = 0.5
+max_speed = 50.0
 
 [node name="Area3D" type="Area3D" parent="."]
 transform = Transform3D(8, 0, 0, 0, -3.49691e-07, -8, 0, 8, -3.49691e-07, 0.00397396, 1.56751, -8.46196)
@@ -55,3 +58,33 @@ mesh = SubResource("SphereMesh_uk1oa")
 wait_time = 4.0
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+
+[node name="Test_Arm" parent="." instance=ExtResource("4_vsl3f")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+
+[node name="Test_Arm6" parent="." instance=ExtResource("4_vsl3f")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+
+[node name="Test_Arm5" parent="." instance=ExtResource("4_vsl3f")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+
+[node name="Test_Arm4" parent="." instance=ExtResource("4_vsl3f")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+
+[node name="Test_Arm3" parent="." instance=ExtResource("4_vsl3f")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+
+[node name="Test_Arm2" parent="." instance=ExtResource("4_vsl3f")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+
+[node name="DirectionalLight3D" type="SpotLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.61202, -2.02043)
+layers = 2
+light_color = Color(0.917647, 0.498039, 0.945098, 1)
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.51127, -1.96323, -1.57573)
+stream = ExtResource("5_ro0jk")
+attenuation_model = 1
+autoplay = true
+max_distance = 73.8

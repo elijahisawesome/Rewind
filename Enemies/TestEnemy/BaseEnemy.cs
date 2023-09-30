@@ -6,7 +6,6 @@ public abstract partial class BaseEnemy:CharacterBody3D{
 
     public abstract void setRotation(string str);
     public abstract bool CheckVision();
-
     public abstract void MoveToTarget(double delta);
 
     public void switchStateChar(char s){

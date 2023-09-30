@@ -1,18 +1,22 @@
 using Godot;
 using System;
+using System.Runtime.Intrinsics.Arm;
 using System.Threading.Tasks;
 
 
 public partial class Test_Enemy : BaseEnemy
 {
-	public const float Speed = 5.0f;
-	public const float accel = 1.5f;
+	public const float Speed = 15.0f;
+	public const float accel = 6.5f;
 	public const float attackDistance = 2f;
+	int armIndex = 0;
+	Test_Arm[] arms;
 
 	public int roamCounter = 1;
 	public int maxRoamCounter = 4;
 	public float roamRadius = 5;
 	public Vector3 targetLastPosition;
+	Vector3 nextPathPos;
 
 	public NavigationAgent3D nav;
 	public Player player;
@@ -38,6 +42,12 @@ public partial class Test_Enemy : BaseEnemy
 		id = (int)GetMeta("ID");
 		mpm.addEnemyToTrackedMultiplayerEnemies(this,id);
 		
+		arms = new Test_Arm[6];
+		foreach(Test_Arm arm in arms){
+			GD.Print(armIndex);
+			arms[armIndex] = GetChild<Test_Arm>(armIndex+7);
+			armIndex++;
+		}
 		
 		stateMachine = new EnemyStateMachine(this);
 
@@ -56,7 +66,7 @@ public partial class Test_Enemy : BaseEnemy
 			mpm.hostTransmitEnemyState((int)GetMeta("ID"));
 		}
 	}
-	public override void setRotation(string strRot){
+    public override void setRotation(string strRot){
         String[] Rots = strRot.Split(',');
 		string x = Rots[0].Remove(0,1);
 		string z = Rots[2].Remove(Rots[2].Length -1,1);
@@ -97,9 +107,10 @@ public partial class Test_Enemy : BaseEnemy
 							if(result["collider"].ToString().Contains("CharacterBody3D")){
 								string res = ((CharacterBody3D)result["collider"]).GetType().ToString();
 								if(res == "Player" || res == "MPlayer"){
-									var distance = origin - end;
+									//var distance = origin - end;
 
 									//testInstanceDrawBox(distance,end);
+									setArms(nextPathPos);
 									return true;
 								}
 							}
@@ -135,9 +146,9 @@ public partial class Test_Enemy : BaseEnemy
 						if(result["collider"].ToString().Contains("CharacterBody3D")){
 							string res = ((CharacterBody3D)result["collider"]).GetType().ToString();
 							if(res == "Player" || res == "MPlayer"){
-								var distance = origin - end;
+								//var distance = origin - end;
 
-								testInstanceDrawBox(distance,end);
+								//testInstanceDrawBox(distance,end);
 								return true;
 							}
 						}
@@ -177,8 +188,8 @@ public partial class Test_Enemy : BaseEnemy
 
 		Godot.Vector3 dir = new Godot.Vector3();
 		nav.TargetPosition = target.GlobalPosition;
-		
-		dir = nav.GetNextPathPosition() - GlobalPosition;
+		nextPathPos = nav.GetNextPathPosition();
+		dir = nextPathPos - GlobalPosition;
 		dir = dir.Normalized();
 	
 		LookAt(target.GlobalPosition);
@@ -211,10 +222,10 @@ public partial class Test_Enemy : BaseEnemy
 
 		Godot.Vector3 dir = new Godot.Vector3();
 		nav.TargetPosition = targetLastPosition;
-		
-		dir = nav.GetNextPathPosition() - GlobalPosition;
+		nextPathPos = nav.GetNextPathPosition();
+		dir = nextPathPos - GlobalPosition;
 		dir = dir.Normalized();
-	
+		setArms(nextPathPos);
 		LookAt(new Vector3(targetLastPosition.X, Position.Y,targetLastPosition.Z));
 
 		velocity = velocity.Lerp(dir*Speed, accel*(float)delta);
@@ -243,7 +254,7 @@ public partial class Test_Enemy : BaseEnemy
 		newRot.Y = (float)Math.Sin(((timer.TimeLeft/3))*delta);
 		Rotation += newRot;
 
-
+		setRandomArms();
 	}
 	public override bool SearchTimerComplete(){
 		if(timer.TimeLeft < 0.1f){
@@ -303,4 +314,33 @@ public partial class Test_Enemy : BaseEnemy
         throw new NotImplementedException();
     }
 
+	public void setArms(Vector3 pos){
+		//new implementation, cast rays from sphere and place markers where rays land if they're within a certain distance. Remove markers that are too far away
+		armIndex = armIndex%6;
+		Random r = new Random();
+		if((arms[armIndex].getMarkerPos() - nextPathPos).Length() > 3){
+
+			var newPos = pos+(r.NextSingle()-.5f)*Vector3.One*4f;
+			newPos.Y = Position.Y;
+			arms[armIndex].setMarkerPos(newPos);
+		}
+		
+		
+		//GetChild<Test_Arm>(7).setMarkerPos(pos);
+		armIndex++;
+	}
+	public void setRandomArms(){
+		armIndex = armIndex%6;
+		Random r = new Random();
+		var newPos = arms[armIndex].getMarkerPos()+(r.NextSingle()-.5f)*Vector3.One*.2f;
+		arms[armIndex].setMarkerPos(newPos);
+		
+		//GetChild<Test_Arm>(7).setMarkerPos(pos);
+		armIndex++;
+	}
+	public void retractArms(){
+		foreach(var arm in arms){
+			arm.setMarkerPos(Position);
+		}
+	}
 }

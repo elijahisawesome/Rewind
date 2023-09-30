@@ -1,0 +1,17 @@
+[gd_scene load_steps=4 format=3 uid="uid://cj7rprfdwtqcj"]
+
+[ext_resource type="PackedScene" uid="uid://m8w6r7c05lyf" path="res://Enemies/TestEnemy/Enemy-Alien.glb" id="1_4tuj5"]
+[ext_resource type="Texture2D" uid="uid://bik71v8yj5n0x" path="res://Enemies/TestEnemy/Enemy-Alien_BakedEyes.png" id="2_g3k1e"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_i61lt"]
+transparency = 2
+alpha_scissor_threshold = 0.5
+alpha_antialiasing_mode = 0
+albedo_texture = ExtResource("2_g3k1e")
+emission_enabled = true
+emission_texture = ExtResource("2_g3k1e")
+
+[node name="Enemy-Alien" instance=ExtResource("1_4tuj5")]
+
+[node name="EnemyTwo" parent="." index="0"]
+surface_material_override/1 = SubResource("StandardMaterial3D_i61lt")

@@ -14,8 +14,12 @@ Enemies/GenericAssets/
 *.png
 *.kra
 *.import
+*.wav
+*.jpg
 Release/
 Fonts/
+Audio/
 2DArt/HUDElements/Bars
 2DArt/HUDElements/Faces
 2DArt/HUDElements
+Enemies/TestEnemy/Textures/
