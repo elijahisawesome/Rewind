@@ -1,10 +1,11 @@
-[gd_scene load_steps=10 format=3 uid="uid://c21nraja1ibbx"]
+[gd_scene load_steps=12 format=3 uid="uid://c21nraja1ibbx"]
 
 [ext_resource type="Script" path="res://Enemies/TestEnemy/Test_Enemy.cs" id="1_diofr"]
 [ext_resource type="PackedScene" uid="uid://m8w6r7c05lyf" path="res://Enemies/TestEnemy/Enemy-Alien.glb" id="2_03e2j"]
 [ext_resource type="ArrayMesh" uid="uid://crjx1m1sqfw71" path="res://Enemies/GenericAssets/VisionCone.obj" id="3_oot0e"]
 [ext_resource type="PackedScene" uid="uid://dunyys7iu60sf" path="res://Enemies/TestEnemy/test_arm.tscn" id="4_vsl3f"]
 [ext_resource type="AudioStream" uid="uid://byicmmu00f2f5" path="res://Audio/ISeeYou.wav" id="5_ro0jk"]
+[ext_resource type="Script" path="res://Enemies/TestEnemy/AgroSystemTestProbe.cs" id="6_yap2t"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_f43xw"]
 
@@ -14,6 +15,9 @@ points = PackedVector3Array(0, -1, -3.22513, -2.28058, -1, -2.28058, 0, 1, 0, 2.
 [sub_resource type="SphereShape3D" id="SphereShape3D_1u54d"]
 
 [sub_resource type="SphereMesh" id="SphereMesh_uk1oa"]
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_5ddm0"]
+viewport_path = NodePath("Sprite3D/SubViewport")
 
 [node name="Test_Enemy" type="CharacterBody3D"]
 script = ExtResource("1_diofr")
@@ -83,8 +87,26 @@ layers = 2
 light_color = Color(0.917647, 0.498039, 0.945098, 1)
 
 [node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.51127, -1.96323, -1.57573)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0623837, 1.61536, -1.57573)
 stream = ExtResource("5_ro0jk")
 attenuation_model = 1
 autoplay = true
 max_distance = 73.8
+
+[node name="Sprite3D" type="Sprite3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.743223, 0, 0, 0, 1, 0, 3.03461, -0.979955)
+billboard = 1
+texture = SubResource("ViewportTexture_5ddm0")
+
+[node name="SubViewport" type="SubViewport" parent="Sprite3D"]
+transparent_bg = true
+size = Vector2i(400, 250)
+
+[node name="TextEdit" type="TextEdit" parent="Sprite3D/SubViewport"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Penis"
+script = ExtResource("6_yap2t")

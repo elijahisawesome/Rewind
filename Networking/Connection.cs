@@ -29,7 +29,7 @@ public class TCPConnection{
         }
         else{
             client = new TcpClient();
-            client.BeginConnect(address,defaultPort,new System.AsyncCallback(acceptSocketCallbackCli),client);
+            client.BeginConnect(address,11001,new System.AsyncCallback(acceptSocketCallbackCli),client);
         }
     }
     public TcpClient setClientFromListenerForMPlayers(){
@@ -170,7 +170,7 @@ public class TCPConnection{
     public void broadcastPlayerRespawn(playerLifePacket pkt){
 
     }
-    public async System.Threading.Tasks.Task acceptGenericTCPSignal(TcpClient cli, MPlayer player){
+    public async System.Threading.Tasks.Task acceptGenericTCPSignal(TcpClient cli, MPlayer mplayer){
         //handle disconnects
         if(mpm.hosting){
             try{
@@ -191,8 +191,9 @@ public class TCPConnection{
             }
             catch(Exception e){
                 if(e is System.InvalidOperationException){
+                    mpm.playerDisconnected(mplayer.id);
                     cli.Close();
-                    cli.Dispose();
+                    cli.Dispose(); 
                 }
             }
         }
@@ -218,6 +219,7 @@ public class TCPConnection{
                 if(e is System.InvalidOperationException){
                     cli.Close();
                     cli.Dispose();
+                    mpm.GetTree().Quit();
                 }
             }
         }

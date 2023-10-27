@@ -1,12 +1,13 @@
-public class IdleEnemyState : EnemyBaseState
+public class AttackingEnemyState : EnemyBaseState
 {
+    int countdown = 60;
     EnemyStateMachine eStateMachine;
     BaseEnemy enemy;
     public override void EnterState(EnemyStateMachine e)
     {
         eStateMachine = e;
         enemy = eStateMachine.enemy;
-        enemy.switchStateChar('I');
+        enemy.switchStateChar('A');
         enemy.targetID = -1;
     }
 
@@ -23,12 +24,10 @@ public class IdleEnemyState : EnemyBaseState
 
     public override void MaintainState(double delta)
     {
-       if( eStateMachine.enemy.CheckVision()){
-            eStateMachine.enemy.SwitchTarget();
-            eStateMachine.changeState(eStateMachine.alertState);
-            return;
-       }
-
+        countdown--;
+        if(countdown <= 0){
+            eStateMachine.changeState(eStateMachine.idleState);
+        }  
     }
 
 }

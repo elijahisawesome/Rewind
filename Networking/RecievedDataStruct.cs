@@ -16,12 +16,11 @@ public struct enemyMovePacket{
     public char type;
 
     public char anim;
+    public int targetID;
     public int enemyNumber;
-    //public string position;
     public string px;
     public string py;
     public string pz;
-    public string rotation;
 }
 public struct playerHitPacket{
     public char type;

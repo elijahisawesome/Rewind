@@ -6,6 +6,7 @@ public class SearchingEnemyState : EnemyBaseState
     {
         stateMachine = e;
         enemy = stateMachine.enemy;
+        enemy.targetID = -1;
         enemy.ResetRoamCounter();
         enemy.switchStateChar('S');
         Godot.GD.Print("searching...");
@@ -23,7 +24,8 @@ public class SearchingEnemyState : EnemyBaseState
 
     public override void MaintainState(double delta)
     {
-        bool visible = enemy.CheckVision();
+        enemy.EvaluateTargets();
+        bool visible = enemy.hasTarget();
         
         if(visible){
             stateMachine.changeState(stateMachine.alertState);

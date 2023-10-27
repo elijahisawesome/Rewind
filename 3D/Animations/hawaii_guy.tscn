@@ -1,0 +1,58 @@
+[gd_scene load_steps=9 format=3 uid="uid://ch74b4pbk7tpl"]
+
+[ext_resource type="PackedScene" path="res://3D/Animations/Hawaii-Guy.glb" id="1_0hthn"]
+[ext_resource type="Script" path="res://3D/Animations/himbo_base.cs" id="2_crw8b"]
+[ext_resource type="Texture2D" uid="uid://b8mcdsr6fj34g" path="res://3D/Animations/Hawaii-Guy_T-FRONT-GUY1.png" id="3_k0sse"]
+[ext_resource type="Texture2D" uid="uid://tmjvuquqe7xi" path="res://3D/Animations/Hawaii-Guy_T-SIDE-GUY.png" id="4_50aeb"]
+[ext_resource type="Texture2D" uid="uid://cnf56x5rk5lmn" path="res://3D/Animations/Hawaii-Guy_t-back-guy.png" id="5_wko43"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4tdnv"]
+transparency = 2
+alpha_scissor_threshold = 0.5
+alpha_antialiasing_mode = 0
+cull_mode = 2
+shading_mode = 2
+diffuse_mode = 3
+specular_mode = 1
+albedo_texture = ExtResource("3_k0sse")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_krqho"]
+transparency = 2
+alpha_scissor_threshold = 0.5
+alpha_antialiasing_mode = 0
+cull_mode = 2
+diffuse_mode = 3
+specular_mode = 1
+albedo_texture = ExtResource("4_50aeb")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_i6rh3"]
+transparency = 2
+alpha_scissor_threshold = 0.5
+alpha_antialiasing_mode = 0
+cull_mode = 2
+diffuse_mode = 3
+specular_mode = 1
+albedo_texture = ExtResource("5_wko43")
+
+[node name="Hawaii-Guy" instance=ExtResource("1_0hthn")]
+script = ExtResource("2_crw8b")
+
+[node name="Skeleton3D" parent="Armature" index="0"]
+bones/0/rotation = Quaternion(0.244218, 0.737531, 0.258253, 0.574205)
+bones/3/rotation = Quaternion(0.334045, -0.360766, -0.578246, 0.651072)
+bones/4/rotation = Quaternion(0.125021, -0.00124329, 0.016296, 0.992019)
+bones/5/rotation = Quaternion(-0.000308429, 8.87853e-09, -7.3816e-06, 1)
+bones/6/rotation = Quaternion(0.011276, -9.69642e-08, -1.09344e-09, 0.999936)
+bones/7/rotation = Quaternion(-0.00702101, 5.72244e-08, 9.59877e-10, 0.999975)
+bones/10/rotation = Quaternion(-0.431915, -0.027879, -0.0661013, 0.899057)
+bones/11/rotation = Quaternion(-0.0362618, -1.29329e-07, 6.1928e-09, 0.999342)
+bones/15/rotation = Quaternion(-0.4029, -0.0313949, -0.055435, 0.913024)
+bones/20/rotation = Quaternion(0.350451, 0.32513, 0.608851, 0.633068)
+bones/21/rotation = Quaternion(0.125021, 0.00124328, -0.016296, 0.992019)
+
+[node name="Hawaii-Guy-Armatured" parent="Armature/Skeleton3D" index="0"]
+surface_material_override/0 = SubResource("StandardMaterial3D_4tdnv")
+surface_material_override/1 = SubResource("StandardMaterial3D_krqho")
+surface_material_override/2 = SubResource("StandardMaterial3D_i6rh3")
+
+[connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_animation_player_animation_finished"]

@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3 uid="uid://bup65x1xmocgr"]
+
+[ext_resource type="PackedScene" uid="uid://lk172r6f7mrk" path="res://3D/GoreParts/HimboBase_Gore_Arm.glb" id="1_7voa2"]
+[ext_resource type="Script" path="res://3D/GoreParts/himbo_base_gore_arm.cs" id="2_8vn1j"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_q8mvo"]
+height = 4.804
+
+[node name="himbo_base_gore_arm" type="RigidBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.249485, 0.186618, 0)
+collision_layer = 2
+script = ExtResource("2_8vn1j")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(-0.027742, 0.167721, 0, -0.167721, -0.027742, 0, 0, 0, 0.17, 0.647201, -0.257128, 0)
+shape = SubResource("CylinderShape3D_q8mvo")
+
+[node name="HimboBase_Gore_Arm" parent="." instance=ExtResource("1_7voa2")]
+transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0, 0)

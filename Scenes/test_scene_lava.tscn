@@ -1,9 +1,11 @@
-[gd_scene load_steps=5 format=3 uid="uid://6ulj566cqvj5"]
+[gd_scene load_steps=7 format=3 uid="uid://6ulj566cqvj5"]
 
 [ext_resource type="PackedScene" uid="uid://c2taf01ctgone" path="res://Environments/Building_4_Test.tscn" id="1_5lbd1"]
 [ext_resource type="PackedScene" uid="uid://iyeds18qvhoc" path="res://LocalPlayer/Player.tscn" id="2_6g5x6"]
 [ext_resource type="PackedScene" uid="uid://khyelnfkst7y" path="res://Networking/MultiplayerManager.tscn" id="3_g8n3s"]
 [ext_resource type="PackedScene" uid="uid://c21nraja1ibbx" path="res://Enemies/TestEnemy/Test_Enemy.tscn" id="4_lqrmy"]
+[ext_resource type="PackedScene" uid="uid://cvpcpwe72yayl" path="res://OtherPlayers/MPlayer.tscn" id="5_ccm35"]
+[ext_resource type="PackedScene" uid="uid://dgp48l102n7lx" path="res://Environments/SwampTown/InDoor.tscn" id="6_chp4c"]
 
 [node name="Test_Scene_Lava" type="Node"]
 
@@ -22,3 +24,16 @@ metadata/ID = 6
 [node name="Test_Enemy2" parent="." instance=ExtResource("4_lqrmy")]
 transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 20.1803, 14.1967, -9.8272)
 metadata/ID = 7
+
+[node name="MPlayer" parent="." instance=ExtResource("5_ccm35")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.67491, 22.9521, 0)
+
+[node name="Door" parent="." node_paths=PackedStringArray("otherDoor", "player") instance=ExtResource("6_chp4c")]
+transform = Transform3D(-4.37114e-07, 0, 10, 0, 10, 0, -10, 0, -4.37114e-07, 0.892089, 19.7819, -14.5041)
+otherDoor = NodePath("../Door2")
+player = NodePath("../Player")
+
+[node name="Door2" parent="." node_paths=PackedStringArray("otherDoor", "player") instance=ExtResource("6_chp4c")]
+transform = Transform3D(10, 0, 0, 0, 10, 0, 0, 0, 10, -15.4645, 20.5816, 10.9291)
+otherDoor = NodePath("../Door")
+player = NodePath("../Player")

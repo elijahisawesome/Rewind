@@ -47,7 +47,7 @@ public class UDPSend{
         d+=packet.pz;
         d+=deliminator;
         d+=packet.rotation;
-       
+
         concatinatePackets(d,rEP);
     }
     public void sendData(playerHitPacket packet, IPEndPoint rEP){
@@ -73,7 +73,13 @@ public class UDPSend{
         d+=deliminator;
         d+=packet.pz;
         d+=deliminator;
+        d+=packet.targetID;
+        /*
+        d+=packet.mx;
+        d+=deliminator;
+        d+=packet.mz;
         d+=packet.rotation;
+        */
         concatinatePackets(d, rEP);
     }
     	private void concatinatePackets(string str, IPEndPoint rEP){

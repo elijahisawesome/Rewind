@@ -1,0 +1,26 @@
+[gd_scene load_steps=3 format=3 uid="uid://husp42oe65x8"]
+
+[ext_resource type="PackedScene" uid="uid://bshioyf023op1" path="res://3D/Animations/HimboBase.glb" id="1_d5bpb"]
+[ext_resource type="Script" path="res://3D/Animations/himbo_base.cs" id="2_1fvrp"]
+
+[node name="HimboBase" instance=ExtResource("1_d5bpb")]
+script = ExtResource("2_1fvrp")
+
+[node name="Skeleton3D" parent="Armature" index="0"]
+bones/0/position = Vector3(0, -0.15627, -6.79201e-09)
+bones/0/rotation = Quaternion(-0.027868, 0, 0, 0.999612)
+bones/3/rotation = Quaternion(-0.499592, -0.812192, 0.0866068, 0.288535)
+bones/4/rotation = Quaternion(-0.0483511, -0.127939, 0.146867, 0.979655)
+bones/6/rotation = Quaternion(-0.434088, 0.825725, 0.148332, 0.328244)
+bones/7/rotation = Quaternion(-0.0356125, -0.0505594, -0.254475, 0.9651)
+bones/8/position = Vector3(7.77156e-16, -8.88178e-16, -0.137615)
+bones/9/rotation = Quaternion(-0.361512, -0.121662, -0.279135, 0.881244)
+bones/10/rotation = Quaternion(-0.00717495, 0.00475813, 0.337086, 0.941434)
+bones/11/position = Vector3(-7.77156e-16, -8.88178e-16, -0.137615)
+bones/12/rotation = Quaternion(-0.34714, 0.140863, 0.314083, 0.872355)
+bones/13/rotation = Quaternion(-0.00703329, -0.013573, -0.38486, 0.922848)
+
+[node name="AnimationPlayer" parent="." index="1"]
+autoplay = "Idle"
+
+[connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_animation_player_animation_finished"]

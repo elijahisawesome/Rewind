@@ -1,0 +1,20 @@
+[gd_scene load_steps=4 format=3 uid="uid://btrlkwrstya82"]
+
+[ext_resource type="PackedScene" uid="uid://c4tbgjd604ht6" path="res://3D/GoreParts/HimboBase_Gore_Torso.glb" id="1_iak5f"]
+[ext_resource type="Script" path="res://3D/GoreParts/himbo_base_gore_torso.cs" id="2_p2rui"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_pvux2"]
+height = 3.19
+radius = 1.255
+
+[node name="himbo_base_gore_torso" type="RigidBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.472766, 0)
+collision_layer = 2
+script = ExtResource("2_p2rui")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0, -0.46045, 0)
+shape = SubResource("CylinderShape3D_pvux2")
+
+[node name="HimboBase_Gore_Torso" parent="." instance=ExtResource("1_iak5f")]
+transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0, 0)

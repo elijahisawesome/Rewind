@@ -2,6 +2,8 @@ using Godot;
 using System;
 using System.Runtime.Intrinsics.Arm;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Linq;
 
 
 public partial class Test_Enemy : BaseEnemy
@@ -11,7 +13,7 @@ public partial class Test_Enemy : BaseEnemy
 	public const float attackDistance = 2f;
 	int armIndex = 0;
 	Test_Arm[] arms;
-
+	int visionDepth = 16;
 	public int roamCounter = 1;
 	public int maxRoamCounter = 4;
 	public float roamRadius = 5;
@@ -24,7 +26,14 @@ public partial class Test_Enemy : BaseEnemy
 	Area3D proximitySensor;
 	EnemyStateMachine stateMachine;
 	MultiplayerManager mpm;
+	public class baseTargets {
+		public CharacterBody3D target;
+		public int heat = 0;
+		public bool marked = false;
+	}
+	public List<baseTargets> targets;
 	CharacterBody3D target;
+	bool targetAquired = false;
 	RayCast3D rayCast;
 	Timer timer;
 	Godot.Collections.Array<Rid> excludes;
@@ -41,6 +50,7 @@ public partial class Test_Enemy : BaseEnemy
 		mpm = GetNode<MultiplayerManager>("%MultiplayerManager");
 		id = (int)GetMeta("ID");
 		mpm.addEnemyToTrackedMultiplayerEnemies(this,id);
+		targets = new List<baseTargets>();
 		
 		arms = new Test_Arm[6];
 		foreach(Test_Arm arm in arms){
@@ -51,7 +61,6 @@ public partial class Test_Enemy : BaseEnemy
 		
 		stateMachine = new EnemyStateMachine(this);
 
-		
 		excludes = new Godot.Collections.Array<Rid>
                     {
                         GetRid()
@@ -63,7 +72,13 @@ public partial class Test_Enemy : BaseEnemy
 	{
 		if(mpm.hosting){
 			stateMachine.process(delta);
-			mpm.hostTransmitEnemyState((int)GetMeta("ID"));
+			mpm.hostTransmitEnemyState((int)GetMeta("Id"));
+		}
+		else{
+			if(targetID != -1){
+				MoveToTarget(delta);
+				setArms(nextPathPos);
+			}
 		}
 	}
     public override void setRotation(string strRot){
@@ -71,6 +86,104 @@ public partial class Test_Enemy : BaseEnemy
 		string x = Rots[0].Remove(0,1);
 		string z = Rots[2].Remove(Rots[2].Length -1,1);
 		Rotation = new Vector3(x.ToFloat(), Rots[1].ToFloat(),z.ToFloat());
+    }
+	//check cone, add new targets if they don't exist in cone already.
+	//add some threat if they're new
+	public void GatherTargets(){
+		try{
+			var bodies = visionCone.GetOverlappingBodies();
+			//var closeBodies = proximitySensor.GetOverlappingBodies();
+			foreach(var body in bodies){
+				bool newBod = true;
+				if(body is Player){
+					foreach(var tgt in targets){
+						if(tgt.target == body ||(body as Player).isDead()){
+							newBod = false;
+							break;
+						}
+					}
+				if(newBod){
+                        baseTargets tgt = new baseTargets
+                        {
+                            target = (CharacterBody3D)body,
+                            heat = 0
+                        };
+                        targets.Add(tgt);
+					}
+				}
+			}
+		}
+		catch(Exception e){
+
+		}
+	}
+	//add to heat based on target's distance based on targets log distance
+	public int CheckVision(CharacterBody3D bod){
+		var spaceState = GetWorld3D().DirectSpaceState;
+		int range = 0;
+		var end = bod.Position;
+		var origin = new Vector3(GlobalPosition.X,GlobalPosition.Y+1f,GlobalPosition.Z);
+		end = new Vector3(end.X,end.Y+1f,end.Z);
+		var shot = PhysicsRayQueryParameters3D.Create(origin, end);
+		shot.CollideWithAreas = false;
+		shot.Exclude = excludes;
+						
+		var result = spaceState.IntersectRay(shot);
+		
+
+		if(result.Count > 0){
+			if(result["collider"].ToString().Contains("CharacterBody3D")){
+					float temp = 1/((((Vector3)result["position"]).Length() - Position.Length())/visionDepth);
+					temp*=temp*50f/100;
+
+					range = (int)temp;
+				}
+		}
+
+		return range; 
+	}
+    public override bool hasTarget()
+    {
+		//GD.Print((target != null));
+        return (target != null);
+    }
+    public override void EvaluateTargets(){
+		int maxheat = 0;
+		
+		CharacterBody3D interimtarget = target;
+		GatherTargets();
+		//bool[] marked = new bool[targets.Count];
+        //Check vision for all targets in cone. Add to aggro meter based on distance from target
+		//remove fixed heat from all targets
+		//if target heat is 0, remove from targets
+		for(int x = 0; x<targets.Count; x++){
+			var tgt = targets[x];
+			tgt.heat += CheckVision(tgt.target);
+			tgt.heat -= 2;
+			if(tgt.heat > 100){
+				tgt.heat = 100;
+			}
+			if(tgt.heat <= 0 || ((Player)tgt.target).isDead()){
+				tgt.marked = true;
+			}
+			if(tgt.marked){
+				targets.Remove(tgt);
+				if(tgt.target == target){
+					target = null;
+				}
+			}
+			if(tgt.heat > maxheat){
+				maxheat = tgt.heat;
+				interimtarget = tgt.target;
+			}
+
+		}
+
+		if(targets != null && targets.Any() && maxheat >0 && !((Player)interimtarget).isDead()){
+			target = interimtarget;
+			targetID = ((Player)target).id;
+		}
+		
     }
     public override bool CheckVision()
     {
@@ -111,6 +224,7 @@ public partial class Test_Enemy : BaseEnemy
 
 									//testInstanceDrawBox(distance,end);
 									setArms(nextPathPos);
+									targetID = ((Player)target).id;
 									return true;
 								}
 							}
@@ -147,7 +261,7 @@ public partial class Test_Enemy : BaseEnemy
 							string res = ((CharacterBody3D)result["collider"]).GetType().ToString();
 							if(res == "Player" || res == "MPlayer"){
 								//var distance = origin - end;
-
+								targetID = ((Player)target).id;
 								//testInstanceDrawBox(distance,end);
 								return true;
 							}
@@ -162,6 +276,9 @@ public partial class Test_Enemy : BaseEnemy
 		}
 		return false;
 
+
+	}
+	public void clientPathToTarget(double delta){
 
 	}
     async void testInstanceDrawBox(Vector3 Length, Vector3 targetLocation){
@@ -200,7 +317,30 @@ public partial class Test_Enemy : BaseEnemy
 		
 		MoveAndSlide();
     }
+	public override void setTargets(enemyMovePacket emp){
+		if(emp.targetID <0){
+			targetAquired = false;
+			targetID = emp.targetID;
+			return;
+		}
+		if(!targetAquired){
+			targetID = emp.targetID;
+			if(emp.targetID == player.id){
+				target = player;
+			}
+			else{
+				target = mpm.getMPlayer(emp.targetID);
+			}
+		}
+	}
 
+	public override void currentServerPos(enemyMovePacket emp){
+		var serverPos = new Vector3(emp.px.ToFloat(),emp.py.ToFloat(),emp.pz.ToFloat());
+		//Rotation = new Vector3(0, Rots[1].ToFloat(),0);
+		if((serverPos -Position).Length() > 3){
+			Position = serverPos;
+		}
+	}
     public override void CheckDistanceFromTarget()
     {
         throw new NotImplementedException();
@@ -238,14 +378,18 @@ public partial class Test_Enemy : BaseEnemy
     public override void Attack()
     {
 		Vector3 pos = new Vector3(target.Position.X,target.Position.Y+2,target.Position.Z) - Position;
-		if(target is Player){
+		if(pos.Length() <3){
+			if((target as Player).id == mpm.maxPlayerCount+1){
 			(target as Player).die(pos);
 		}
 		else if(target is MPlayer && !(target as MPlayer).dead){
 			(target as MPlayer).broadcastDeath(pos);
 			(target as MPlayer).die(pos);
 		}
+		target = null;
 		GD.Print("Hey!");
+		}
+		
         
     }
 
@@ -304,10 +448,7 @@ public partial class Test_Enemy : BaseEnemy
 		return true;
 	}
 
-    public override void EvaluateTargets()
-    {
-        throw new NotImplementedException();
-    }
+
 
     public override bool EvaluateAttack()
     {
@@ -326,8 +467,22 @@ public partial class Test_Enemy : BaseEnemy
 		}
 		
 		
-		//GetChild<Test_Arm>(7).setMarkerPos(pos);
 		armIndex++;
+	}
+	public void setMarkerPos(Vector3 pos){
+	armIndex = armIndex%6;
+		Random r = new Random();
+		if((arms[armIndex].getMarkerPos() - nextPathPos).Length() > 3){
+
+			var newPos = pos+(r.NextSingle()-.5f)*Vector3.One*4f;
+			newPos.Y = Position.Y;
+			arms[armIndex].setMarkerPos(newPos);
+		}
+		armIndex++;
+	}
+
+	public Vector3 getMarkerPos(){
+		return nextPathPos;
 	}
 	public void setRandomArms(){
 		armIndex = armIndex%6;
@@ -335,7 +490,6 @@ public partial class Test_Enemy : BaseEnemy
 		var newPos = arms[armIndex].getMarkerPos()+(r.NextSingle()-.5f)*Vector3.One*.2f;
 		arms[armIndex].setMarkerPos(newPos);
 		
-		//GetChild<Test_Arm>(7).setMarkerPos(pos);
 		armIndex++;
 	}
 	public void retractArms(){

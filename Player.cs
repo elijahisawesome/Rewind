@@ -73,7 +73,9 @@ public partial class Player : CharacterBody3D
 		
 		MoveAndSlide();
 	}
-
+public bool isDead(){
+	return dead;
+}
 	public void takeDamage(playerHitPacket pkt){
 		//display some kinda damage indicator
 		GD.Print("Shot thru the heart, and youre to blame. Uopi give loooove a bad name, da nua na an aa na na na na");
@@ -148,9 +150,6 @@ public partial class Player : CharacterBody3D
 	}
 	
 	public void enemyHit(MPlayer target){
-		GD.Print(target.port);
-		GD.Print(target.hostPort);
-		GD.Print(target.id);
 		mpm.playerHit(target.id, id);
 	}
 	public void determineAnimationAndBroadcast(ref RecievedDataStruct pkt){

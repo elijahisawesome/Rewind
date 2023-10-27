@@ -3,10 +3,12 @@ using Godot;
 public abstract partial class BaseEnemy:CharacterBody3D{
     char stateChar = 'I';
     public int id;
-
+    public int targetID;
+    public abstract bool hasTarget();
     public abstract void setRotation(string str);
     public abstract bool CheckVision();
     public abstract void MoveToTarget(double delta);
+    public abstract void currentServerPos(enemyMovePacket v);
 
     public void switchStateChar(char s){
         stateChar = s;
@@ -15,6 +17,7 @@ public abstract partial class BaseEnemy:CharacterBody3D{
         return stateChar;
     }
     public abstract void SetTargetLastPosition();
+    public abstract void setTargets(enemyMovePacket emp);
 
     public abstract bool HasArrivedAtLastPosition();
 

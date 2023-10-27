@@ -12,6 +12,7 @@ public class EnemyStateMachine{
     
     public readonly SearchingEnemyState searchingState = new SearchingEnemyState();
 
+    public readonly AttackingEnemyState attackingState = new AttackingEnemyState();
     public EnemyStateMachine(BaseEnemy _enemy){
         enemy = _enemy;
         currentState = idleState;

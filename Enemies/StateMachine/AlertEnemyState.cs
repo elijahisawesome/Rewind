@@ -1,5 +1,7 @@
 
 
+using Godot;
+
 public class AlertEnemyState : EnemyBaseState
 {   
     EnemyStateMachine stateMachine;
@@ -25,7 +27,8 @@ public class AlertEnemyState : EnemyBaseState
 
     public override void MaintainState(double delta)
     {
-        bool visible = enemy.CheckVision();
+        enemy.EvaluateTargets();
+        bool visible = enemy.hasTarget();
         bool Arrived = enemy.HasArrivedAtLastPosition();
         if(!Arrived){
             if(visible){
@@ -39,10 +42,11 @@ public class AlertEnemyState : EnemyBaseState
         else{
             if(visible){
                 enemy.Attack();
+                stateMachine.changeState(stateMachine.searchingState);
                 enemy.SetTargetLastPosition();
             }
             else{
-                stateMachine.changeState(stateMachine.searchingState);
+                
             }
         }
        

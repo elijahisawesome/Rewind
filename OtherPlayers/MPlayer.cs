@@ -5,9 +5,9 @@ using System.Net.Sockets;
 //using System.Numerics;
 
 
-public partial class MPlayer : CharacterBody3D
+public partial class MPlayer : Player
 {
-	public int id;
+	//public int id;
 	public UDPSend send;
 	public UDPRecieve recieve;
 	TcpClient tcpClient;
@@ -104,8 +104,9 @@ public partial class MPlayer : CharacterBody3D
 			setHimboAnimation(packet.anim);
 			Vector3 pos = new Vector3(packet.px.ToFloat(),packet.py.ToFloat(),packet.pz.ToFloat());
 			//Vector3 rot = packet.rotation;
-			extractRotation(packet.rotation);
 			Position = pos;
+			extractRotation(packet.rotation);
+			
 			//GD.Print(new Vector3(packet.px.ToFloat(),packet.py.ToFloat(),packet.pz.ToFloat()));
 		}
 		catch(Exception e){

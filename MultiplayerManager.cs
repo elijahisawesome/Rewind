@@ -10,7 +10,7 @@ public partial class MultiplayerManager : Node
 	MPlayer host;
 	public int playerCount = 0;
 	public int enemyCount = 0;
-	int maxPlayerCount = 4;
+	public int maxPlayerCount = 4;
 	int defaultUDPPort = 11000;
 	UdpClient udpClient;
 	UdpClient udpClientHost;
@@ -99,7 +99,6 @@ public override async void _PhysicsProcess(double delta)
 
 				connection.acceptGenericTCPSignal(tcpClient, host);
 				
-				
 				clientSend.sendData(packet,clientSend.RemoteIpEndPoint);
 				clientSend.flushUDPPacket();
 
@@ -146,10 +145,13 @@ public override async void _PhysicsProcess(double delta)
 					EnemyMovePacket.px = splitData[1];
 					EnemyMovePacket.py = splitData[2];
 					EnemyMovePacket.pz = splitData[3];
-					EnemyMovePacket.rotation = splitData[4];
+					EnemyMovePacket.targetID = splitData[4].ToInt();
 
-					enemies[EnemyMovePacket.enemyNumber].Position = new Vector3(EnemyMovePacket.px.ToFloat(),EnemyMovePacket.py.ToFloat(),EnemyMovePacket.pz.ToFloat());
-					enemies[EnemyMovePacket.enemyNumber].setRotation(EnemyMovePacket.rotation);
+					enemies[EnemyMovePacket.enemyNumber].setTargets(EnemyMovePacket);
+					enemies[EnemyMovePacket.enemyNumber].currentServerPos(EnemyMovePacket);
+					//EnemyMovePacket.rotation = splitData[4];
+					//enemies[EnemyMovePacket.enemyNumber].Position = new Vector3(EnemyMovePacket.px.ToFloat(),EnemyMovePacket.py.ToFloat(),EnemyMovePacket.pz.ToFloat());
+					//enemies[EnemyMovePacket.enemyNumber].setRotation(EnemyMovePacket.rotation);
 				}
 			}
 				
@@ -184,6 +186,9 @@ public override async void _PhysicsProcess(double delta)
 
 						if(hitPacket.recieverID == player.id){
 							player.takeDamage(hitPacket);
+						}
+						else{
+							playerHit(hitPacket.recieverID,hitPacket.attackerID);
 						}
 					}
 					else if(splitData[0][0].ToString() == "m"){
@@ -243,12 +248,15 @@ public override async void _PhysicsProcess(double delta)
 					if(enemies[y].getStateChar() == 'I'){
 						continue;
 					}
+					Vector3 vec = ((Test_Enemy)enemies[y]).getMarkerPos();
 					enemyMovePacket packett = new enemyMovePacket();
 					packett.enemyNumber=enemies[y].id;
+					packett.targetID = enemies[y].targetID;
 					packett.px = enemies[y].Position.X.ToString();
 					packett.py = enemies[y].Position.Y.ToString();
 					packett.pz = enemies[y].Position.Z.ToString();
-					packett.rotation = enemies[y].Rotation.ToString();
+					
+					
 					mPlayers[x].hostTransmitPositionToPlayers(packett);
 					
 				}
@@ -262,7 +270,15 @@ public override async void _PhysicsProcess(double delta)
 		}
 
 	}
-
+	public MPlayer getMPlayer(int id){
+		if(id == maxPlayerCount+1){
+			return host;
+		}
+		else if(id == player.id){
+			return (MPlayer)player;
+		}
+		return mPlayers[id];
+	}
 	public void broadcastRespawn(int id, Vector3 loc){
 		playerLifePacket pkt = new playerLifePacket();
 		pkt.playerID = id;
@@ -400,6 +416,28 @@ public override async void _PhysicsProcess(double delta)
 			connection.serverSendClientDeath(id, rotation, mPlayers[x].getTCPClient());
 		}
 	}
+	public void playerDisconnected(int id){
+		
+		for(int x = id+1; x<playerCount; x++){
+			mPlayers[x].id = x-1;
+			mPlayers[x-1]=mPlayers[x];
+		}
+		playerCount--;
+		broadcastPlayerDisconnect(id);
+		for(int x = 0; x<playerCount; x++){
+			GD.Print("Disconnect");
+			GD.Print("Disconnect");
+			GD.Print(mPlayers[x].id);
+			GD.Print("Disconnect");
+			GD.Print("Disconnect");
+		}
+		mPlayers[id].destroy();
+		mPlayers[id].Dispose();
+	}
+	public void broadcastPlayerDisconnect(int id){
+
+	}
+
 	public void playerHit(int hitPlayersID, int attackersID){
 		if(hosting){
 			for(int x = 0; x<playerCount; x++){

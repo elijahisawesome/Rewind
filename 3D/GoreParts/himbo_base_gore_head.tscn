@@ -1,0 +1,17 @@
+[gd_scene load_steps=4 format=3 uid="uid://bd2pm4q2w56i8"]
+
+[ext_resource type="PackedScene" uid="uid://nm1qe6kfj1j4" path="res://3D/GoreParts/HimboBase_Gore_Head.glb" id="1_nl1ts"]
+[ext_resource type="Script" path="res://3D/GoreParts/himbo_base_gore_head.cs" id="2_aih3f"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_7gbm0"]
+
+[node name="himbo_base_gore_head" type="RigidBody3D"]
+collision_layer = 2
+script = ExtResource("2_aih3f")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0, 0, 0)
+shape = SubResource("SphereShape3D_7gbm0")
+
+[node name="HimboBase_Gore_Head" parent="." instance=ExtResource("1_nl1ts")]
+transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0, 0)
